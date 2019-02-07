@@ -1,4 +1,4 @@
-package com.mar;
+package com.mar.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
