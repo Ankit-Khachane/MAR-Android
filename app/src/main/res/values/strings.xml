@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">MAR</string>
+    <string name="app_list_item_name_tag">Installed app name</string>
+    <string name="app_list_item_no_tag">12</string>
+    <string name="btn_fetch_apps_title">Fetch Apps</string>
+    <string name="app_lock_toggle_drawable">app_lock_toggle</string>
 </resources>
