@@ -1,5 +1,6 @@
 package com.mar;
 
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.mar.adapter.AppListAdapter;
+import com.mar.services.AppLockService;
 import com.mar.utils.AppLockUtils;
 
 import java.util.ArrayList;
@@ -44,5 +46,6 @@ public class HomeActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mAppListAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        startService(new Intent(this, AppLockService.class));
     }
 }
