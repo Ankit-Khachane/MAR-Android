@@ -8,12 +8,13 @@
 
     <TextView
         android:id="@+id/tv_app_no"
-        android:layout_width="40dp"
+        android:layout_width="60dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:gravity="start|center_vertical"
         android:paddingStart="5dp"
         android:paddingEnd="0dp"
+        android:singleLine="true"
         android:text="@string/app_list_item_no_tag"
         android:textSize="18sp"
         android:textStyle="bold" />
@@ -27,6 +28,7 @@
         android:gravity="start|center_vertical"
         android:paddingLeft="5dp"
         android:paddingRight="5dp"
+        android:singleLine="true"
         android:text="@string/app_list_item_name_tag"
         android:textSize="18sp"
         android:textStyle="bold"

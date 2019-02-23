@@ -13,6 +13,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <receiver
+            android:name=".recevier.BootCompletedReceiver"
+            android:enabled="true"
+            android:exported="false"></receiver>
+
+        <service
+            android:name=".services.AppLockService"
+            android:enabled="true"
+            android:exported="false" />
+
         <activity
             android:name=".HomeActivity"
             android:screenOrientation="portrait" />

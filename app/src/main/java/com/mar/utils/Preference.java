@@ -1,5 +1,6 @@
 package com.mar.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -15,6 +16,7 @@ public class Preference {
     private static SharedPreferences mSharedPreferences;
     private static SharedPreferences.Editor mEditor;
 
+    @SuppressLint("CommitPrefEdits")
     public Preference(Context context) {
         mSharedPreferences = context.getSharedPreferences(PreferenceFileName, Context.MODE_PRIVATE);
         mEditor = mSharedPreferences.edit();

@@ -18,10 +18,10 @@ import java.util.List;
 public class AppListAdapter extends RecyclerView.Adapter<AppListAdapter.AppListViewHolder> {
     private static final String TAG = "AppListAdapter";
     private Context mContext;
-    private List<ApplicationInfo> mAppInstalledList;
+    private static List<ApplicationInfo> mAppInstalledList;
 
     public AppListAdapter(Context context, List<ApplicationInfo> mAppInstalledList) {
-        this.mAppInstalledList = mAppInstalledList;
+        AppListAdapter.mAppInstalledList = mAppInstalledList;
         this.mContext = context;
     }
 
