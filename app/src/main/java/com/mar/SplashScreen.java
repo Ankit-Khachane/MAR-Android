@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 public class SplashScreen extends AppCompatActivity {
     //log tag of class
@@ -17,9 +16,7 @@ public class SplashScreen extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Intent i = new Intent(SplashScreen.this, HomeActivity.class);
-                startActivity(i);
-                Log.i(TAG, "onCreate: Splash Finished");
+                startActivity(new Intent(SplashScreen.this, HomeActivity.class));
                 finish();
             }
         }, 2000);

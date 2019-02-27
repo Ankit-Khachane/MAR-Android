@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AppLockUtils {
-    // TODO: 23-02-2019 Design Applock Util Functions For App.
     private static final String TAG = "AppLockUtils";
     private static List<ApplicationInfo> mApplicationInfo = null;
     private static PackageManager packageManager;
