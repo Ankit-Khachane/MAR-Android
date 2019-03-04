@@ -12,6 +12,7 @@ import android.os.Message;
 import android.os.Process;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
@@ -30,6 +31,8 @@ public class AppLockService extends Service {
     private String restricted_app_name = "com.google.android.gm";
     private boolean isAppLocked = false;
     private boolean isRestrictedAppFound = false;
+    private Intent homeintent;
+
 
     public AppLockService() {
     }
@@ -63,8 +66,29 @@ public class AppLockService extends Service {
 
         assert params != null;
         params.gravity = Gravity.CENTER;
+        lock_page_view.setFocusableInTouchMode(true);
+        lock_page_view.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_BACK) {
+                    lockApp(false);
+                    goToHome();
+                } else {
+                    return false;
+                }
+                return false;
+            }
+        });
 
         Log.i(TAG, "onCreate: mBackgroundThread Thread Id : - " + mBackgroundThread.getThreadId());
+    }
+
+    private void goToHome() {
+        //intent call to launcher home of the system
+        homeintent = new Intent(Intent.ACTION_MAIN);
+        homeintent.addCategory(Intent.CATEGORY_HOME);
+        homeintent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(homeintent);
     }
 
     @Override
