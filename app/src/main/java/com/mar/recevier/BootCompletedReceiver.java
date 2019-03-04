@@ -16,10 +16,10 @@ public class BootCompletedReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (Objects.requireNonNull(intent.getAction()).equals(Intent.ACTION_BOOT_COMPLETED)) {
             context.startService(new Intent(context, AppLockService.class));
-            Log.i(TAG, "onReceive: Boot Completed Bradcast Received after  Boot Completed");
+            Log.i(TAG, "onReceive: Boot Completed Broadcast Received after  Boot Completed");
         } else if (Objects.equals(intent.getAction(), Intent.ACTION_LOCKED_BOOT_COMPLETED)) {
             context.startService(new Intent(context, AppLockService.class));
-            Log.i(TAG, "onReceive: Boot Completed Bradcast Received after Phone Unlocked");
+            Log.i(TAG, "onReceive: Boot Completed Broadcast Received after Phone Unlocked");
         }
     }
 }

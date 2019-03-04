@@ -15,6 +15,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class AppMonitorEngine {
+    private static final String TAG = "AppMonitorEngine";
     private static final int DEFAULT_TIMEOUT = 1000;
 
     private int timeout = DEFAULT_TIMEOUT;
@@ -26,7 +27,7 @@ public class AppMonitorEngine {
     private Detector detector;
     private Handler handler;
 
-    public AppMonitorEngine() {
+    public AppMonitorEngine(Context context) {
         listeners = new HashMap<>();
         handler = new Handler(Looper.getMainLooper());
         if (AppMonitorUtil.postLollipop())
@@ -36,7 +37,7 @@ public class AppMonitorEngine {
     }
 
 
-    public AppMonitorEngine(Handler customHandler) {
+    public AppMonitorEngine(Context context, Handler customHandler) {
         listeners = new HashMap<>();
         this.handler = customHandler;
         if (AppMonitorUtil.postLollipop())

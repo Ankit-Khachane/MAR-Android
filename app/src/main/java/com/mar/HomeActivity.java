@@ -24,7 +24,7 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity {
     private static final String TAG = "HomeActivity";
     public static final int usage_access_request = 8898;
-    public static final int draw_over_otherapp_request = 9989;
+    public static final int draw_over_other_app_request = 9989;
 
     private RecyclerView mRecyclerView;
     private AppListAdapter mAppListAdapter;
@@ -49,16 +49,16 @@ public class HomeActivity extends AppCompatActivity {
             } else if (!AppMonitorUtil.hasDrawOverOtherAppPermission(getApplicationContext())) {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                     Intent i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-                    startActivityForResult(i, draw_over_otherapp_request);
+                    startActivityForResult(i, draw_over_other_app_request);
                 }
 //                startActivityForResult(i, draw_overlay_request);
             }
         }
-        if (mappinfo.isEmpty()) {
+       /* if (mappinfo.isEmpty()) {
             mappinfo = apputil.getLaunchableInstalledApplications();
         } else {
             Log.i(TAG, "onCreate: applist is initialised already");
-        }
+        }*/
     }
 
     @Override
@@ -73,7 +73,7 @@ public class HomeActivity extends AppCompatActivity {
                     Log.i(TAG, "onActivityResult: Usage Access Permission Not Allowed");
                     break;
                 }
-            case draw_over_otherapp_request:
+            case draw_over_other_app_request:
                 if (resultCode == RESULT_OK) {
                     startActivity(new Intent(HomeActivity.this, HomeActivity.class));
                     finish();

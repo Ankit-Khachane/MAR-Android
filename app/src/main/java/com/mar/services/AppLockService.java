@@ -26,8 +26,10 @@ public class AppLockService extends Service {
     private AppMonitorEngine appMonitorEngine;
     private WindowManager windowManager;
     private WindowManager.LayoutParams params = null;
-
     private View lock_page_view;
+    private String restricted_app_name = "com.google.android.gm";
+    private boolean isAppLocked = false;
+    private boolean isRestrictedAppFound = false;
 
     public AppLockService() {
     }
@@ -39,7 +41,7 @@ public class AppLockService extends Service {
         mBackgroundThread = new HandlerThread("AppLockService.HandlerThread", Process.THREAD_PRIORITY_BACKGROUND);
         mBackgroundThread.start();
         mServiceHandler = new ServiceHandler(mBackgroundThread.getLooper());
-        appMonitorEngine = new AppMonitorEngine(mServiceHandler);
+        appMonitorEngine = new AppMonitorEngine(this, mServiceHandler);
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
@@ -84,13 +86,23 @@ public class AppLockService extends Service {
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        startActivity(new Intent(getApplicationContext(), this.getClass()));
+        startService(new Intent(getApplicationContext(), this.getClass()));
         super.onTaskRemoved(rootIntent);
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         return null;
+    }
+
+    public void lockApp(boolean lockflag) {
+        if (lockflag) {
+            windowManager.addView(lock_page_view, params);
+            isAppLocked = true;
+        } else {
+            windowManager.removeViewImmediate(lock_page_view);
+            isAppLocked = false;
+        }
     }
 
     private class ServiceHandler extends Handler {
@@ -101,27 +113,7 @@ public class AppLockService extends Service {
 
         @Override
         public void handleMessage(Message msg) {
-            /*
-            */
-            //this below block of code is to start appmonitor engine for checking foreground apps
-            //when our app only or any specific app
-            /*appMonitorEngine
-                    .when(getPackageName(), new AppMonitorEngine.Listener() {
-                        @Override
-                        public void onForeground(String process) {
-//                            Toast.makeText(AppLockService.this, "Our App is in Foreground" + process, Toast.LENGTH_SHORT).show();
-                            Log.i(TAG, "onForeground: Our App is in Foreground - " + process);
-                        }
-                    })
-                    .whenOther(new AppMonitorEngine.Listener() {
-                        @Override
-                        public void onForeground(String process) {
-//                            Toast.makeText(AppLockService.this, "Foreground " + process, Toast.LENGTH_SHORT).show();
-                            Log.i(TAG, "onForeground: ForeGround App Name  = " + process);
-                        }
-                    }).timeout(1000).start(getApplicationContext());*/
             //any app
-            String restrictedappname = "com.google.android.gm";
             appMonitorEngine
                     .when(getPackageName(), new AppMonitorEngine.Listener() {
                         @Override
@@ -132,21 +124,33 @@ public class AppLockService extends Service {
                     .whenOther(new AppMonitorEngine.Listener() {
                         @Override
                         public void onForeground(String process) {
-//                            Toast.makeText(AppLockService.this, "Any : -  " + process, Toast.LENGTH_SHORT).show();
-
-                            if (process.equals(restrictedappname)) {
-                               /* if (windowManager != null) {
-                                    windowManager.addView(lock_page_view, params);
+                            if (process.equals(restricted_app_name)) {
+                                /*if (!isAppLocked) {
+                                    //if app detected first time lock over it @isAppLocked = false
+                                    lockApp(true);
+                                    Log.i(TAG, "App Locked First Time");
                                 } else {
-                                    Log.i(TAG, "onCreate: window manager is null");
+                                    //if  app is locked before do following
+                                    if (isAppLocked) {
+                                        Log.i(TAG, "App Already Locked isAppLocked is True = " + isAppLocked);
+                                    } else {
+                                        Log.i(TAG, "isAppLocked Flag is False = " + isAppLocked);
+                                    }
                                 }*/
-                                // TODO: 27-02-2019 Add DB Based Cross Checked In Real Time And Add LockView on Restricted App only once at its first Detection.
+                                isRestrictedAppFound = true;
                             } else {
-                                Log.i(TAG, "onForeground: Foreground App is Not Restricted - " + process);
+                                isRestrictedAppFound = false;
                             }
-                            Log.i(TAG, "onForeground: On Any App Launches - " + process);
+                            if (isRestrictedAppFound && !isAppLocked) {
+                                lockApp(true);
+                            }
+                            if (!isRestrictedAppFound && isAppLocked)
+                                lockApp(false);
+                            Log.i(TAG, "onForeground: On Any App Launches = " + process);
                         }
-                    }).timeout(1000).start(getApplicationContext());
+                    })
+                    .timeout(1000)
+                    .start(getApplicationContext());
         }
     }
 }
