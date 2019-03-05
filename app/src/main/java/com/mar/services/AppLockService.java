@@ -47,7 +47,7 @@ public class AppLockService extends Service {
         appMonitorEngine = new AppMonitorEngine(this, mServiceHandler);
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
-        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             params = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.MATCH_PARENT,
@@ -64,8 +64,8 @@ public class AppLockService extends Service {
                     PixelFormat.TRANSPARENT);
         }
 
-        assert params != null;
-        params.gravity = Gravity.CENTER;
+        if (params != null)
+            params.gravity = Gravity.CENTER;
         lock_page_view.setFocusableInTouchMode(true);
         lock_page_view.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -100,18 +100,30 @@ public class AppLockService extends Service {
 
     @Override
     public void onDestroy() {
+
         super.onDestroy();
+
         appMonitorEngine.stop();
         mBackgroundThread.quitSafely();
-        startActivity(new Intent(getApplicationContext(), this.getClass()));
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            this.startForegroundService(new Intent(this, AppLockService.class));
+        } else {
+            this.startService(new Intent(this, AppLockService.class));
+        }
         Log.i(TAG, "onDestroy: AppLock Service Destroyed");
 
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
-        startService(new Intent(getApplicationContext(), this.getClass()));
         super.onTaskRemoved(rootIntent);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            this.startForegroundService(new Intent(this, AppLockService.class));
+        } else {
+            this.startService(new Intent(this, AppLockService.class));
+        }
     }
 
     @Override
