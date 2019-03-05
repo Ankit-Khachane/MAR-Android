@@ -29,9 +29,8 @@ public class AppLockService extends Service {
     private WindowManager.LayoutParams params = null;
     private View lock_page_view;
     private String restricted_app_name = "com.google.android.gm";
-    private boolean isAppLocked = false;
-    private boolean isRestrictedAppFound = false;
-    private Intent homeintent;
+    private boolean isAppLocked;
+    private boolean isRestrictedAppFound;
 
 
     public AppLockService() {
@@ -40,6 +39,8 @@ public class AppLockService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        isAppLocked = false;
+        isRestrictedAppFound = false;
         lock_page_view = LayoutInflater.from(this).inflate(R.layout.lock_view, null);
         mBackgroundThread = new HandlerThread("AppLockService.HandlerThread", Process.THREAD_PRIORITY_BACKGROUND);
         mBackgroundThread.start();
@@ -85,7 +86,7 @@ public class AppLockService extends Service {
 
     private void goToHome() {
         //intent call to launcher home of the system
-        homeintent = new Intent(Intent.ACTION_MAIN);
+        Intent homeintent = new Intent(Intent.ACTION_MAIN);
         homeintent.addCategory(Intent.CATEGORY_HOME);
         homeintent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(homeintent);
@@ -100,12 +101,11 @@ public class AppLockService extends Service {
 
     @Override
     public void onDestroy() {
-
         super.onDestroy();
-
         appMonitorEngine.stop();
         mBackgroundThread.quitSafely();
-
+        isAppLocked = false;
+        isRestrictedAppFound = false;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             this.startForegroundService(new Intent(this, AppLockService.class));
         } else {
