@@ -20,6 +20,9 @@ import android.view.WindowManager;
 import com.mar.R;
 import com.mar.appmonitor.AppMonitorEngine;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AppLockService extends Service {
     private static final String TAG = "AppLockService";
     private volatile HandlerThread mBackgroundThread;
@@ -29,6 +32,7 @@ public class AppLockService extends Service {
     private WindowManager.LayoutParams params = null;
     private View lock_page_view;
     private String restricted_app_name = "com.google.android.gm";
+    private List<String> restricted_apps;
     private boolean isAppLocked;
     private boolean isRestrictedAppFound;
 
@@ -41,12 +45,17 @@ public class AppLockService extends Service {
         super.onCreate();
         isAppLocked = false;
         isRestrictedAppFound = false;
-        lock_page_view = LayoutInflater.from(this).inflate(R.layout.lock_view, null);
-        mBackgroundThread = new HandlerThread("AppLockService.HandlerThread", Process.THREAD_PRIORITY_BACKGROUND);
+        if (lock_page_view == null)
+            lock_page_view = LayoutInflater.from(this).inflate(R.layout.lock_view, null);
+        if (mBackgroundThread == null)
+            mBackgroundThread = new HandlerThread("AppLockService.HandlerThread", Process.THREAD_PRIORITY_BACKGROUND);
         mBackgroundThread.start();
-        mServiceHandler = new ServiceHandler(mBackgroundThread.getLooper());
-        appMonitorEngine = new AppMonitorEngine(this, mServiceHandler);
-        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        if (mServiceHandler == null)
+            mServiceHandler = new ServiceHandler(mBackgroundThread.getLooper());
+        if (appMonitorEngine == null)
+            appMonitorEngine = new AppMonitorEngine(this, mServiceHandler);
+        if (windowManager == null)
+            windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             params = new WindowManager.LayoutParams(
@@ -65,8 +74,7 @@ public class AppLockService extends Service {
                     PixelFormat.TRANSPARENT);
         }
 
-        if (params != null)
-            params.gravity = Gravity.CENTER;
+        params.gravity = Gravity.CENTER;
         lock_page_view.setFocusableInTouchMode(true);
         lock_page_view.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -80,6 +88,11 @@ public class AppLockService extends Service {
                 return false;
             }
         });
+        restricted_apps = new ArrayList<>();
+        restricted_apps.add("com.whatsapp");
+        restricted_apps.add("com.facebook.katana");
+        restricted_apps.add("com.instagram.android");
+        restricted_apps.add("com.zhiliaoapp.musically.go");
 
         Log.i(TAG, "onCreate: mBackgroundThread Thread Id : - " + mBackgroundThread.getThreadId());
     }
@@ -101,29 +114,24 @@ public class AppLockService extends Service {
 
     @Override
     public void onDestroy() {
-        super.onDestroy();
-        appMonitorEngine.stop();
-        mBackgroundThread.quitSafely();
+        if (appMonitorEngine != null)
+            appMonitorEngine.stop();
+        if (mBackgroundThread.isAlive())
+            mBackgroundThread.quitSafely();
         isAppLocked = false;
         isRestrictedAppFound = false;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            this.startForegroundService(new Intent(this, AppLockService.class));
-        } else {
-            this.startService(new Intent(this, AppLockService.class));
-        }
+        sendBroadcast(new Intent("LockServiceRestart"));
+        Log.i(TAG, "onTaskRemoved: Broadcast Sent To LockServiceRestart");
         Log.i(TAG, "onDestroy: AppLock Service Destroyed");
+        super.onDestroy();
 
     }
 
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         super.onTaskRemoved(rootIntent);
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            this.startForegroundService(new Intent(this, AppLockService.class));
-        } else {
-            this.startService(new Intent(this, AppLockService.class));
-        }
+        sendBroadcast(new Intent("LockServiceRestart"));
+        Log.i(TAG, "onTaskRemoved: Broadcast Sent To LockServiceRestart");
     }
 
     @Override
@@ -160,23 +168,7 @@ public class AppLockService extends Service {
                     .whenOther(new AppMonitorEngine.Listener() {
                         @Override
                         public void onForeground(String process) {
-                            if (process.equals(restricted_app_name)) {
-                                /*if (!isAppLocked) {
-                                    //if app detected first time lock over it @isAppLocked = false
-                                    lockApp(true);
-                                    Log.i(TAG, "App Locked First Time");
-                                } else {
-                                    //if  app is locked before do following
-                                    if (isAppLocked) {
-                                        Log.i(TAG, "App Already Locked isAppLocked is True = " + isAppLocked);
-                                    } else {
-                                        Log.i(TAG, "isAppLocked Flag is False = " + isAppLocked);
-                                    }
-                                }*/
-                                isRestrictedAppFound = true;
-                            } else {
-                                isRestrictedAppFound = false;
-                            }
+                            isRestrictedAppFound = restricted_apps.contains(process);
                             if (isRestrictedAppFound && !isAppLocked) {
                                 lockApp(true);
                             }

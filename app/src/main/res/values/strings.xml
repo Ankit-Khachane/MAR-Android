@@ -1,8 +1,8 @@
 <resources>
-    <string name="app_name">MAR</string>
+    <string name="app_name">M.A.R</string>
     <string name="app_list_item_name_tag">Installed app name</string>
     <string name="app_list_item_no_tag">123</string>
-    <string name="btn_fetch_apps_title">Fetch Apps</string>
+    <string name="btn_fetch_apps_title">Lock Apps</string>
     <string name="app_lock_toggle_drawable">app_lock_toggle</string>
     <string name="restricted_page_msg">App is Restricted</string>
 </resources>
