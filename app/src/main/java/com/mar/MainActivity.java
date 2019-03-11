@@ -10,7 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 
+import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
@@ -53,8 +55,10 @@ public class MainActivity extends AppCompatActivity {
 //                startActivityForResult(i, draw_overlay_request);
             }
         }
+
         serviceintent = new Intent(this, AppLockService.class);
         pieChart = findViewById(R.id.pie_chart_view);
+        pieChart.animateXY(1000, 2000, Easing.EaseInOutSine);
 
         pieEntries = new ArrayList<PieEntry>();
         pieEntries.add(0, new PieEntry(34.5f, "WhatsApp"));
@@ -62,10 +66,9 @@ public class MainActivity extends AppCompatActivity {
         pieEntries.add(2, new PieEntry(25, "Instagram"));
         pieEntries.add(3, new PieEntry(15.5f, "TikTok"));
 
-        pieDataSet = new PieDataSet(pieEntries, "AppUsagePieChart");
+        pieDataSet = new PieDataSet(pieEntries, "App Usage PieChart");
 
         colorlist = new ArrayList<>();
-
         colorlist.add(getResources().getColor(R.color.whatsapp_color));
         colorlist.add(getResources().getColor(R.color.facebook_color));
         colorlist.add(getResources().getColor(R.color.instagram_color));
@@ -73,6 +76,10 @@ public class MainActivity extends AppCompatActivity {
 
         pieDataSet.setColors(colorlist);
         pieDataSet.setValueTextColor(Color.WHITE);
+        pieDataSet.setValueTextSize(18);
+        pieDataSet.setFormSize(16);
+        pieDataSet.setSliceSpace(1);
+        pieDataSet.setForm(Legend.LegendForm.CIRCLE);
         pieDataSet.setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
@@ -80,28 +87,22 @@ public class MainActivity extends AppCompatActivity {
                 return decimalFormat.format(value) + " %";
             }
         });
-        pieDataSet.setValueTextSize(18);
 
         pieData = new PieData(pieDataSet);
 
         pieChart.setData(pieData);
         pieChart.setUsePercentValues(true);
         pieChart.setDrawEntryLabels(false);
-        pieChart.setDrawSlicesUnderHole(true);
         pieChart.invalidate();
-        pieChart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stopService(serviceintent);
-                Log.i(TAG, "lockapps: service stopped");
-            }
-        });
-
-
     }
 
     public void lockapps(View view) {
         startService(serviceintent);
+        Log.i(TAG, "lockapps: service stareted");
+    }
+
+    public void unlockapps(View view) {
+        stopService(serviceintent);
         Log.i(TAG, "lockapps: service stareted");
     }
 

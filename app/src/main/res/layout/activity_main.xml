@@ -10,17 +10,40 @@
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/pie_chart_view"
         android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:layout_gravity="center">
+        android:layout_height="400dp"
+        android:layout_gravity="center"
+        android:layout_margin="10dp">
 
     </com.github.mikephil.charting.charts.PieChart>
 
     <Button
         android:id="@+id/btn_lock"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="48dp"
         android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/button_start_round_corner_shape"
         android:onClick="lockapps"
-        android:text="@string/btn_fetch_apps_title" />
+        android:text="@string/btn_lock_label"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/btn_unlock"
+        android:layout_width="200dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/button_stop_round_corner_shape"
+        android:onClick="unlockapps"
+        android:text="@string/btn_unlock_label"
+        android:textAlignment="center"
+        android:textAllCaps="true"
+        android:textSize="18sp"
+        android:textStyle="bold" />
+
 
 </LinearLayout>
