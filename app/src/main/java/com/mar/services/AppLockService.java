@@ -45,8 +45,9 @@ public class AppLockService extends Service {
         super.onCreate();
         isAppLocked = false;
         isRestrictedAppFound = false;
-        if (lock_page_view == null)
+        if (lock_page_view == null) {
             lock_page_view = LayoutInflater.from(this).inflate(R.layout.lock_view, null);
+        }
         if (mBackgroundThread == null)
             mBackgroundThread = new HandlerThread("AppLockService.HandlerThread", Process.THREAD_PRIORITY_BACKGROUND);
         mBackgroundThread.start();
@@ -75,6 +76,7 @@ public class AppLockService extends Service {
         }
 
         params.gravity = Gravity.CENTER;
+        params.windowAnimations = android.R.style.Animation_Toast;
         lock_page_view.setFocusableInTouchMode(true);
         lock_page_view.setOnKeyListener(new View.OnKeyListener() {
             @Override
@@ -93,6 +95,7 @@ public class AppLockService extends Service {
         restricted_apps.add("com.facebook.katana");
         restricted_apps.add("com.instagram.android");
         restricted_apps.add("com.zhiliaoapp.musically.go");
+        restricted_apps.add("com.google.android.gm");
 
         Log.i(TAG, "onCreate: mBackgroundThread Thread Id : - " + mBackgroundThread.getThreadId());
     }
@@ -144,7 +147,7 @@ public class AppLockService extends Service {
             windowManager.addView(lock_page_view, params);
             isAppLocked = true;
         } else {
-            windowManager.removeViewImmediate(lock_page_view);
+            windowManager.removeView(lock_page_view);
             isAppLocked = false;
         }
     }
