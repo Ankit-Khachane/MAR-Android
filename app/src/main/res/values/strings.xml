@@ -6,4 +6,9 @@
     <string name="btn_unlock_label">Unlock Apps</string>
     <string name="app_lock_toggle_drawable">app_lock_toggle</string>
     <string name="restricted_page_msg">App is Restricted</string>
+    <string name="title_activity_main_swipeable">M.A.R</string>
+    <string name="tab_text_1">Monitor</string>
+    <string name="tab_text_2">Analysis</string>
+    <string name="tab_text_3">Restriction</string>
+    <string name="action_settings">Settings</string>
 </resources>

@@ -20,15 +20,30 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".MainActivity"></activity>
+        <activity
+            android:name=".MainSwipeableActivity"
+            android:excludeFromRecents="true"
+            android:label="@string/title_activity_main_swipable"
+            android:screenOrientation="portrait" />
+        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".SplashScreen"
+            android:excludeFromRecents="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <receiver
-            android:name=".recevier.LockServiceRestarter"
+            android:name=".receiver.LockServiceRestarter"
             android:enabled="true"
             android:exported="true"
             android:process=":LockServiceRestarter" />
         <receiver
-            android:name=".recevier.BootCompletedReceiver"
+            android:name=".receiver.BootCompletedReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -40,20 +55,6 @@
             android:name=".services.AppLockService"
             android:process=":LockServiceRestarter"
             android:stopWithTask="false" />
-
-        <activity
-            android:name=".HomeActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".SplashScreen"
-            android:excludeFromRecents="true"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>
