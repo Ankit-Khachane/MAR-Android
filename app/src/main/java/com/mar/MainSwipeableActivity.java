@@ -110,12 +110,12 @@ public class MainSwipeableActivity extends AppCompatActivity {
 
     public void lockapps(View view) {
         startService(serviceintent);
-        Log.i(TAG, "lockapps: service stareted");
+        Log.i(TAG, "lockapps: service started");
     }
 
     public void unlockapps(View view) {
         stopService(serviceintent);
-        Log.i(TAG, "unlockapps: service stareted");
+        Log.i(TAG, "unlockapps: service started");
     }
 
 

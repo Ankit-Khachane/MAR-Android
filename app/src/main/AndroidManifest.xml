@@ -23,9 +23,7 @@
         <activity
             android:name=".MainSwipeableActivity"
             android:excludeFromRecents="true"
-            android:label="@string/title_activity_main_swipable"
             android:screenOrientation="portrait" />
-        <activity android:name=".MainActivity" />
         <activity
             android:name=".SplashScreen"
             android:excludeFromRecents="true"
@@ -41,7 +39,7 @@
             android:name=".receiver.LockServiceRestarter"
             android:enabled="true"
             android:exported="true"
-            android:process=":LockServiceRestarter" />
+            android:process=":LockServiceRestar  ter" />
         <receiver
             android:name=".receiver.BootCompletedReceiver"
             android:enabled="true"
