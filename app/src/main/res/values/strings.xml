@@ -11,4 +11,9 @@
     <string name="tab_text_2">Analysis</string>
     <string name="tab_text_3">Restriction</string>
     <string name="action_settings">Settings</string>
+    <string name="app_icon">app_icon</string>
+    <string name="daily_average_usage">Daily Average Usage :</string>
+    <string name="usage_level">Usage Level :</string>
+    <string name="sample_usage">3 Hr</string>
+    <string name="sample_usage_level">Normal</string>
 </resources>
