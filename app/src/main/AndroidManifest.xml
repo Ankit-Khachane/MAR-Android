@@ -39,7 +39,7 @@
             android:name=".receiver.LockServiceRestarter"
             android:enabled="true"
             android:exported="true"
-            android:process=":LockServiceRestar  ter" />
+            android:process=":LockServiceRestarter" />
         <receiver
             android:name=".receiver.BootCompletedReceiver"
             android:enabled="true"

@@ -8,13 +8,13 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AppLockUtils {
-    private static final String TAG = "AppLockUtils";
+public class AppUsageDataUtils {
+    private static final String TAG = "AppUsageDataUtils";
     private static List<ApplicationInfo> mApplicationInfo = null;
     private static PackageManager packageManager;
     private Context mContext;
 
-    public AppLockUtils(Context context) {
+    public AppUsageDataUtils(Context context) {
         mApplicationInfo = new ArrayList<>();
         this.mContext = context;
         packageManager = context.getPackageManager();
@@ -36,5 +36,28 @@ public class AppLockUtils {
             Log.i(TAG, "getLaunchableInstalledApplications: Apps Info Fetching Failed");
         }
         return mApplicationInfo;
+    }
+
+    public static List<ApplicationInfo> getRestrictedAppsInfoFromSystem() {
+        List<ApplicationInfo> list = packageManager.getInstalledApplications(0);
+        ArrayList<String> restrictedApps = RestrictedAppsRepo.getRestrictedAppList();
+        if (list != null) {
+            for (ApplicationInfo ainfos : list) {
+                if (restrictedApps.contains(ainfos.packageName)) {
+                    mApplicationInfo.add(ainfos);
+                    ApplicationInfo info = ainfos;
+                }
+            }
+        }
+        return mApplicationInfo;
+    }
+
+    public PackageManager getPackageManager() {
+        if (packageManager == null) {
+            packageManager = mContext.getPackageManager();
+        } else {
+            Log.i(TAG, "getPackageManager: PackageManager Already Initialized");
+        }
+        return packageManager;
     }
 }

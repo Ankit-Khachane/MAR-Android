@@ -11,6 +11,9 @@
         android:id="@+id/monitor_listview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:divider="@null"
+        android:dividerHeight="5dp"
+        android:fastScrollEnabled="true"
         android:scrollbars="vertical"
         tools:listitem="@layout/item_monitor_listview">
 

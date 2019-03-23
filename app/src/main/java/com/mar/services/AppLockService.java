@@ -19,6 +19,7 @@ import android.view.WindowManager;
 
 import com.mar.R;
 import com.mar.appmonitor.AppMonitorEngine;
+import com.mar.utils.RestrictedAppsRepo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,12 +92,13 @@ public class AppLockService extends Service {
             }
         });
         restricted_apps = new ArrayList<>();
-        restricted_apps.add("com.whatsapp");
+        restricted_apps.addAll(RestrictedAppsRepo.getRestrictedAppList());
+        /*restricted_apps.add("com.whatsapp");
         restricted_apps.add("com.facebook.katana");
         restricted_apps.add("com.instagram.android");
         restricted_apps.add("com.zhiliaoapp.musically.go");
         restricted_apps.add("com.google.android.gm");
-
+*/
         Log.i(TAG, "onCreate: mBackgroundThread Thread Id : - " + mBackgroundThread.getThreadId());
     }
 
