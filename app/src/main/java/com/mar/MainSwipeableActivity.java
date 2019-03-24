@@ -109,11 +109,13 @@ public class MainSwipeableActivity extends AppCompatActivity {
     }
 
     public void lockapps(View view) {
+        // TODO: 25-03-2019 Adding Passcode Mechanism On Lock For Parental Control
         startService(serviceintent);
         Log.i(TAG, "lockapps: service started");
     }
 
     public void unlockapps(View view) {
+        // TODO: 25-03-2019 CrossChecking Passcode Mechanism For Unlock Parental Control
         stopService(serviceintent);
         Log.i(TAG, "unlockapps: service started");
     }
