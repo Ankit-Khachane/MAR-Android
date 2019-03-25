@@ -16,4 +16,11 @@
     <string name="usage_level">Usage Level :</string>
     <string name="sample_usage">3 Hr</string>
     <string name="sample_usage_level">Normal</string>
+    <string name="app_icon_drawable">app_icon_drawable</string>
+    <string name="unsafe_usage_frame_tv_header">Unsafe Usage</string>
+    <string name="safe_usage_frame_tv_header">Safe Usage</string>
+    <string-array name="time_span_range">
+        <item>Daily</item>
+        <item>Weekly</item>
+    </string-array>
 </resources>

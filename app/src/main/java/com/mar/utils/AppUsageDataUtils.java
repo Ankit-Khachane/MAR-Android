@@ -45,7 +45,6 @@ public class AppUsageDataUtils {
             for (ApplicationInfo ainfos : list) {
                 if (restrictedApps.contains(ainfos.packageName)) {
                     mApplicationInfo.add(ainfos);
-                    ApplicationInfo info = ainfos;
                 }
             }
         }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_analysis"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,117 +13,95 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/bar_chart_card_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="10dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="6dp">
 
-            <LinearLayout
-                android:id="@+id/chart_frame"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <Spinner
-                    android:id="@+id/time_span_selector_spinner"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content" />
-
-                <com.github.mikephil.charting.charts.BarChart
-                    android:id="@+id/app_usage_bar_chart"
-                    android:layout_width="match_parent"
-                    android:layout_height="300dp">
-
-                </com.github.mikephil.charting.charts.BarChart>
-
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/safe_usage_card_view"
+        <LinearLayout
+            android:id="@+id/chart_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="10dp"
-            android:padding="5dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="6dp">
+            android:layout_margin="5dp"
+            android:background="@drawable/rounded_corner_background"
+            android:baselineAligned="false"
+            android:orientation="vertical"
+            android:padding="5dp">
 
+            <Spinner
+                android:id="@+id/time_span_selector_spinner"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp"
+                android:background="@drawable/rounded_corner_background" />
 
-            <LinearLayout
-                android:id="@+id/safe_usage_frame"
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/app_usage_bar_chart"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="350dp"
+                android:layout_gravity="center_vertical">
 
-                <TextView
-                    android:id="@+id/safe_usage_header_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="Safe Usage"
-                    android:textColor="@android:color/holo_green_dark"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+            </com.github.mikephil.charting.charts.BarChart>
 
-                <ListView
-                    android:id="@+id/safe_usage_listview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:divider="@null">
+        </LinearLayout>
 
-                </ListView>
 
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/unsafe_usage_card_view"
+        <LinearLayout
+            android:id="@+id/safe_usage_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_marginBottom="10dp"
-            android:padding="5dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="6dp">
+            android:layout_margin="5dp"
+            android:background="@drawable/rounded_corner_background"
+            android:baselineAligned="false"
+            android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/unsafe_usage_frame"
+            <TextView
+                android:id="@+id/safe_usage_header_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="@string/safe_usage_frame_tv_header"
+                android:textColor="@android:color/holo_green_dark"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ListView
+                android:id="@+id/safe_usage_listview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:divider="@null"
+                tools:listitem="@layout/item_analysis_listview">
 
-                <TextView
-                    android:id="@+id/unsafe_usage_header_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="5dp"
-                    android:text="Unsafe Usage"
-                    android:textColor="@android:color/holo_red_dark"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+            </ListView>
 
-                <ListView
-                    android:id="@+id/unsafe_usage_listview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:divider="@null">
+        </LinearLayout>
 
-                </ListView>
 
-            </LinearLayout>
+        <LinearLayout
+            android:id="@+id/unsafe_usage_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:background="@drawable/rounded_corner_background"
+            android:baselineAligned="false"
+            android:orientation="vertical">
 
-        </android.support.v7.widget.CardView>
+            <TextView
+                android:id="@+id/unsafe_usage_header_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="@string/unsafe_usage_frame_tv_header"
+                android:textColor="@android:color/holo_red_dark"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ListView
+                android:id="@+id/unsafe_usage_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@null"
+                tools:listitem="@layout/item_analysis_listview">
+
+            </ListView>
+
+        </LinearLayout>
 
     </LinearLayout>
 
