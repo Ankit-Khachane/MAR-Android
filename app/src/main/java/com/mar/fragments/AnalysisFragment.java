@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -26,7 +27,9 @@ import com.mar.R;
 import com.mar.adapters.AnalysisAdapter;
 import com.mar.model.AnalysisItem;
 import com.mar.utils.AppUsageDataUtils;
+import com.mar.utils.MultipleListUtil;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,7 +63,6 @@ public class AnalysisFragment extends Fragment {
     private void initView(View rootView) {
         timeSpinner = rootView.findViewById(R.id.time_span_selector_spinner);
         barChart = rootView.findViewById(R.id.app_usage_bar_chart);
-        // TODO: 26-03-2019 research n do mechanism to use 2 listview in scrollview
         safeUsageListView = rootView.findViewById(R.id.safe_usage_listview);
         unsafeUsageListView = rootView.findViewById(R.id.unsafe_usage_listview);
     }
@@ -76,45 +78,39 @@ public class AnalysisFragment extends Fragment {
     public void prepareBarChartData() {
         List<BarEntry> NoOfEmp = new ArrayList<BarEntry>();
 
-        NoOfEmp.add(new BarEntry(70f, 10));
-        NoOfEmp.add(new BarEntry(80f, 14));
-        NoOfEmp.add(new BarEntry(90f, 12));
-        NoOfEmp.add(new BarEntry(100f, 13));
-        NoOfEmp.add(new BarEntry(110f, 14));
-        NoOfEmp.add(new BarEntry(120f, 15));
-        NoOfEmp.add(new BarEntry(130f, 16));
-        NoOfEmp.add(new BarEntry(140f, 17));
-        NoOfEmp.add(new BarEntry(150f, 18));
-        NoOfEmp.add(new BarEntry(160f, 19));
-
-        List<String> year = new ArrayList<String>();
-
-        year.add("2008");
-        year.add("2009");
-        year.add("2010");
-        year.add("2011");
-        year.add("2012");
-        year.add("2013");
-        year.add("2014");
-        year.add("2015");
-        year.add("2016");
-        year.add("2017");
+        NoOfEmp.add(new BarEntry(70f, 10, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
+        NoOfEmp.add(new BarEntry(80f, 14, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
+        NoOfEmp.add(new BarEntry(90f, 12, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
+        NoOfEmp.add(new BarEntry(100f, 13, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
+        NoOfEmp.add(new BarEntry(110f, 14, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
+        NoOfEmp.add(new BarEntry(120f, 15, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
+        NoOfEmp.add(new BarEntry(130f, 16, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
+        NoOfEmp.add(new BarEntry(140f, 17, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
+        NoOfEmp.add(new BarEntry(150f, 18, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
+        NoOfEmp.add(new BarEntry(160f, 19, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
 
         BarDataSet barDataSet = new BarDataSet(NoOfEmp, "App Usage");
-        barDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
+        barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
+        barDataSet.setValueTextSize(16);
+        barDataSet.setHighlightEnabled(false);
+        barDataSet.setDrawIcons(false);
+
         BarData barData = new BarData(barDataSet);
         barData.setBarWidth(5);
         barData.setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                return value + " %";
+                DecimalFormat decimalFormat = new DecimalFormat();
+                return decimalFormat.format(value) + " %";
             }
         });
         barChart.setData(barData);
-        barChart.setExtraBottomOffset(-300);
         barChart.setFitBars(true);
         barChart.setPinchZoom(false);
         barChart.setScaleEnabled(false);
+
+        XAxis x = barChart.getXAxis();
+        x.setPosition(XAxis.XAxisPosition.BOTTOM);
         Log.i(TAG, "prepareBarChartData: BarChart DataSet Good To Go !!!");
     }
 
@@ -135,6 +131,7 @@ public class AnalysisFragment extends Fragment {
         }
         AnalysisAdapter safeAdapter = new AnalysisAdapter(mContext, safeApps, AnalysisAdapter.AnalysisListType.SAFE);
         safeUsageListView.setAdapter(safeAdapter);
+        MultipleListUtil.setListViewHeightBasedOnChildren(safeUsageListView);
         Log.i(TAG, "prepareSafeUsageAppsListData: Safe Apps Data set is Generated");
     }
 
@@ -156,6 +153,7 @@ public class AnalysisFragment extends Fragment {
 
         AnalysisAdapter unsafeAdapter = new AnalysisAdapter(mContext, unsafeApps, AnalysisAdapter.AnalysisListType.UNSAFE);
         unsafeUsageListView.setAdapter(unsafeAdapter);
+        MultipleListUtil.setListViewHeightBasedOnChildren(unsafeUsageListView);
         Log.i(TAG, "prepareSafeUsageAppsListData: Unsafe Apps Data set is Generated");
 
     }

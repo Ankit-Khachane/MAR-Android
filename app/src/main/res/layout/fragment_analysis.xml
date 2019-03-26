@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:overScrollMode="never">
 
     <LinearLayout
         android:id="@+id/main_analysis_view"
@@ -13,65 +14,31 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-
         <LinearLayout
             android:id="@+id/chart_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:background="@drawable/rounded_corner_background"
-            android:baselineAligned="false"
             android:orientation="vertical"
             android:padding="5dp">
 
             <Spinner
                 android:id="@+id/time_span_selector_spinner"
                 android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
+                android:layout_height="36dp"
+                android:layout_margin="5dp"
                 android:background="@drawable/rounded_corner_background" />
 
             <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/app_usage_bar_chart"
                 android:layout_width="match_parent"
-                android:layout_height="350dp"
+                android:layout_height="300dp"
                 android:layout_gravity="center_vertical">
 
             </com.github.mikephil.charting.charts.BarChart>
 
         </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/safe_usage_frame"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="5dp"
-            android:background="@drawable/rounded_corner_background"
-            android:baselineAligned="false"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/safe_usage_header_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="5dp"
-                android:text="@string/safe_usage_frame_tv_header"
-                android:textColor="@android:color/holo_green_dark"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <ListView
-                android:id="@+id/safe_usage_listview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:divider="@null"
-                tools:listitem="@layout/item_analysis_listview">
-
-            </ListView>
-
-        </LinearLayout>
-
 
         <LinearLayout
             android:id="@+id/unsafe_usage_frame"
@@ -79,14 +46,14 @@
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:background="@drawable/rounded_corner_background"
-            android:baselineAligned="false"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/unsafe_usage_header_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
                 android:text="@string/unsafe_usage_frame_tv_header"
                 android:textColor="@android:color/holo_red_dark"
                 android:textSize="18sp"
@@ -97,6 +64,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:divider="@null"
+                android:paddingBottom="5dp"
+                tools:listitem="@layout/item_analysis_listview">
+
+            </ListView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/safe_usage_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="5dp"
+            android:background="@drawable/rounded_corner_background"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/safe_usage_header_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="5dp"
+                android:text="@string/safe_usage_frame_tv_header"
+                android:textColor="@android:color/holo_green_dark"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <ListView
+                android:id="@+id/safe_usage_listview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:divider="@null"
+                android:paddingBottom="5dp"
                 tools:listitem="@layout/item_analysis_listview">
 
             </ListView>
