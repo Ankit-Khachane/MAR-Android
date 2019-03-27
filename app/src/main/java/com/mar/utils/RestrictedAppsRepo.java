@@ -1,12 +1,18 @@
 package com.mar.utils;
 
+import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
+
+import com.mar.R;
 
 import java.util.ArrayList;
 
 public class RestrictedAppsRepo {
     private static final String TAG = "RestrictedAppsRepo";
     private static ArrayList<String> restrictedAppList;
+    private static ArrayList<Integer> colorList;
+    private static Context mContext;
 
     public RestrictedAppsRepo() {
     }
@@ -35,5 +41,18 @@ public class RestrictedAppsRepo {
             Log.i(TAG, "getRestrictedAppList: Restricted Apps List  Already Created");
         }
         return restrictedAppList;
+    }
+
+    public static ArrayList<Integer> getAssociatedColorsForRestrictedApps() {
+        colorList = new ArrayList<>();
+        colorList.add(ContextCompat.getColor(mContext, R.color.whatsapp_color));
+        colorList.add(ContextCompat.getColor(mContext, R.color.facebook_color));
+        colorList.add(ContextCompat.getColor(mContext, R.color.instagram_color));
+        colorList.add(ContextCompat.getColor(mContext, R.color.twitter_color));
+        colorList.add(ContextCompat.getColor(mContext, R.color.snapchat_color));
+        colorList.add(ContextCompat.getColor(mContext, R.color.netflix_color));
+        colorList.add(ContextCompat.getColor(mContext, R.color.youtube_color));
+        colorList.add(ContextCompat.getColor(mContext, R.color.hike_color));
+        return colorList;
     }
 }

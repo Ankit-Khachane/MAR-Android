@@ -5,6 +5,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.mar.appmonitor.AppMonitorUtil;
 import com.mar.fragments.AnalysisFragment;
@@ -28,33 +31,28 @@ public class MainSwipeableActivity extends AppCompatActivity {
     public static final int draw_over_other_app_request = 9989;
     private static final String TAG = "MainSwipeableActivity";
     private Intent serviceintent;
-
-    // TODO: 27/3/19  add the margin to the text view of item monitor  list view
+    private CoordinatorLayout coordinatorLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_swipable);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        coordinatorLayout = findViewById(R.id.main_content);
         setSupportActionBar(toolbar);
         serviceintent = new Intent(this, AppLockService.class);
 
 
-        if (AppMonitorUtil.hasUsageStatsPermission(getApplicationContext()) && AppMonitorUtil.hasDrawOverOtherAppPermission(getApplicationContext())) {
+        if (AppMonitorUtil.hasUsageStatsPermission(getApplicationContext()) &&
+                AppMonitorUtil.hasDrawOverOtherAppPermission(getApplicationContext())) {
             Log.i(TAG, "run: Usage Permission Granted Draw Over Other App is Allowed");
         } else {
             if (!AppMonitorUtil.hasUsageStatsPermission(getApplicationContext())) {
-                Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
-                startActivityForResult(intent, usage_access_request);
+                getUsagePermission();
             } else if (!AppMonitorUtil.hasDrawOverOtherAppPermission(getApplicationContext())) {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    Intent i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-                    startActivityForResult(i, draw_over_other_app_request);
-                }
-//                startActivityForResult(i, draw_overlay_request);
+                getAccessUsageOverlay();
             }
         }
-
 
         TabLayout tabLayout = findViewById(R.id.tab_groups);
         ViewPager mViewPager = findViewById(R.id.viewpager);
@@ -62,9 +60,7 @@ public class MainSwipeableActivity extends AppCompatActivity {
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
-
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -74,13 +70,15 @@ public class MainSwipeableActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
+        switch (id) {
+            case R.id.action_settings:
+                Toast.makeText(this, "Settings Page", Toast.LENGTH_SHORT).show();
+            case R.id.about_settings:
+                Toast.makeText(this, "About App Info", Toast.LENGTH_SHORT).show();
+            default:
+                Toast.makeText(this, "No Menu Item Found", Toast.LENGTH_SHORT).show();
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -113,15 +111,28 @@ public class MainSwipeableActivity extends AppCompatActivity {
     public void lockapps(View view) {
         // TODO: 25-03-2019 Adding Passcode Mechanism On Lock For Parental Control
         startService(serviceintent);
+        Snackbar.make(coordinatorLayout, "Restricted Apps are Locked", Snackbar.LENGTH_SHORT).show();
         Log.i(TAG, "lockapps: service started");
     }
 
     public void unlockapps(View view) {
         // TODO: 25-03-2019 CrossChecking Passcode Mechanism For Unlock Parental Control
         stopService(serviceintent);
+        Snackbar.make(coordinatorLayout, "Restricted Apps are Unlocked", Snackbar.LENGTH_SHORT).show();
         Log.i(TAG, "unlockapps: service started");
     }
 
+    public void getUsagePermission() {
+        Intent intent = new Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS);
+        startActivityForResult(intent, usage_access_request);
+    }
+
+    public void getAccessUsageOverlay() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            Intent i = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
+            startActivityForResult(i, draw_over_other_app_request);
+        }
+    }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 

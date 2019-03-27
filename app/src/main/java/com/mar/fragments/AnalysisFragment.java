@@ -105,6 +105,9 @@ public class AnalysisFragment extends Fragment {
             }
         });
         barChart.setData(barData);
+        barChart.getXAxis().setDrawGridLines(false);
+        barChart.getAxisLeft().setDrawGridLines(false);
+        barChart.getAxisRight().setDrawGridLines(false);
         barChart.setFitBars(true);
         barChart.setPinchZoom(false);
         barChart.setScaleEnabled(false);

@@ -80,6 +80,7 @@ public class RestrictionFragment extends Fragment {
         pieChart.setTransparentCircleRadius(35);
         pieChart.setUsePercentValues(true);
         pieChart.setDrawEntryLabels(false);
+        pieChart.setTouchEnabled(false);
         pieChart.invalidate();
         return fragmentView;
     }
