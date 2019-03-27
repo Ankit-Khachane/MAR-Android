@@ -118,7 +118,7 @@ public class AnalysisFragment extends Fragment {
         safeApps = new ArrayList<AnalysisItem>();
         List<ApplicationInfo> appsInfoFromSystem = AppUsageDataUtils.getRestrictedAppsInfoFromSystem();
         int i = 4;
-        while (i < 14) {
+        while (i < appsInfoFromSystem.size()) {
             ApplicationInfo a = appsInfoFromSystem.get(i);
             AnalysisItem aItem = new AnalysisItem(
                     appUsageDataUtils.getPackageManager().getApplicationLabel(a).toString(),
@@ -139,18 +139,19 @@ public class AnalysisFragment extends Fragment {
         unsafeApps = new ArrayList<AnalysisItem>();
         List<ApplicationInfo> appsInfoFromSystem = AppUsageDataUtils.getRestrictedAppsInfoFromSystem();
         int i = 1;
-        while (i <= 3) {
-            ApplicationInfo a = appsInfoFromSystem.get(i);
-            AnalysisItem aItem = new AnalysisItem(
-                    appUsageDataUtils.getPackageManager().getApplicationLabel(a).toString(),
-                    "High",
-                    "3 Hr",
-                    appUsageDataUtils.getPackageManager().getApplicationIcon(a)
-            );
-            unsafeApps.add(aItem);
-            i++;
+        if (appsInfoFromSystem.size() >= 3) {
+            while (i <= 3) {
+                ApplicationInfo a = appsInfoFromSystem.get(i);
+                AnalysisItem aItem = new AnalysisItem(
+                        appUsageDataUtils.getPackageManager().getApplicationLabel(a).toString(),
+                        "High",
+                        "3 Hr",
+                        appUsageDataUtils.getPackageManager().getApplicationIcon(a)
+                );
+                unsafeApps.add(aItem);
+                i++;
+            }
         }
-
         AnalysisAdapter unsafeAdapter = new AnalysisAdapter(mContext, unsafeApps, AnalysisAdapter.AnalysisListType.UNSAFE);
         unsafeUsageListView.setAdapter(unsafeAdapter);
         MultipleListUtil.setListViewHeightBasedOnChildren(unsafeUsageListView);

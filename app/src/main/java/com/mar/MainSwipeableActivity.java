@@ -29,6 +29,8 @@ public class MainSwipeableActivity extends AppCompatActivity {
     private static final String TAG = "MainSwipeableActivity";
     private Intent serviceintent;
 
+    // TODO: 27/3/19  add the margin to the text view of item monitor  list view
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
