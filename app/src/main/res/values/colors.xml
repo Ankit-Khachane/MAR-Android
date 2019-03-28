@@ -17,4 +17,10 @@
     <color name="youtube_color">#FC0303</color>
     <color name="snapchat_color">#FFF11E</color>
     <color name="hike_color">#1A77FF</color>
+
+    <!--app usage levels-->
+    <color name="low_usage">#FF06C742</color>
+    <color name="medium_usage">#FFEB3B</color>
+    <color name="high_usage">#FF8F00</color>
+    <color name="extreme_usage">#E53935</color>
 </resources>

@@ -104,11 +104,11 @@
                 android:layout_alignParentBottom="true"
                 android:layout_margin="5dp"
                 app:donut_circle_starting_degree="270"
-                app:donut_finished_stroke_width="5dp"
+                app:donut_finished_stroke_width="6dp"
                 app:donut_max="100"
                 app:donut_progress="75"
                 app:donut_text_size="11dp"
-                app:donut_unfinished_stroke_width="5dp" />
+                app:donut_unfinished_stroke_width="6dp" />
         </RelativeLayout>
 
     </android.support.v7.widget.CardView>

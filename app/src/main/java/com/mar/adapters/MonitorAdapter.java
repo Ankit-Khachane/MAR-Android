@@ -50,8 +50,25 @@ public class MonitorAdapter extends ArrayAdapter<MonitorItem> {
         mvh.daily_average_value_tv.setText(item.getDailyAverageUser());
         mvh.usage_level_value_tv.setText(item.getUserLevel());
         mvh.app_icon_iv.setImageDrawable(item.getAppIcon());
-        mvh.circularProgress.setTextColor(mContext.getResources().getColor(R.color.instagram_color));
-        mvh.circularProgress.setFinishedStrokeColor(mContext.getResources().getColor(R.color.instagram_color));
+        float progress = item.getProgressValue();
+        if (progress <= 25) {
+            mvh.circularProgress.setProgress(progress);
+            mvh.circularProgress.setTextColor(mContext.getResources().getColor(R.color.low_usage));
+            mvh.circularProgress.setFinishedStrokeColor(mContext.getResources().getColor(R.color.low_usage));
+        } else if (progress >= 25 && progress <= 50) {
+            mvh.circularProgress.setProgress(progress);
+            mvh.circularProgress.setTextColor(mContext.getResources().getColor(R.color.medium_usage));
+            mvh.circularProgress.setFinishedStrokeColor(mContext.getResources().getColor(R.color.medium_usage));
+        } else if (progress >= 50 && progress <= 75) {
+            mvh.circularProgress.setProgress(progress);
+            mvh.circularProgress.setTextColor(mContext.getResources().getColor(R.color.high_usage));
+            mvh.circularProgress.setFinishedStrokeColor(mContext.getResources().getColor(R.color.high_usage));
+        } else if (progress >= 75) {
+            mvh.circularProgress.setProgress(progress);
+            mvh.circularProgress.setTextColor(mContext.getResources().getColor(R.color.extreme_usage));
+            mvh.circularProgress.setFinishedStrokeColor(mContext.getResources().getColor(R.color.extreme_usage));
+        }
+        mvh.circularProgress.setProgress(progress);
         return convertView;
     }
 

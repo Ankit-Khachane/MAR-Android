@@ -1,5 +1,6 @@
 package com.mar.fragments;
 
+import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,7 +21,6 @@ import com.mar.utils.AppUsageDataUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class MonitorFragment extends Fragment {
     private static final String TAG = "MonitorFragment";
@@ -29,6 +29,7 @@ public class MonitorFragment extends Fragment {
     private ArrayList<MonitorItem> monitorData;
     private List<ApplicationInfo> restrictedAppFromSystem;
     private AppUsageDataUtils appUsageDataUtils;
+    private Context mContext;
 
     @Override
     public void onStart() {
@@ -47,31 +48,9 @@ public class MonitorFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View monitorFragmentView = inflater.inflate(R.layout.fragment_monitor, container, false);
+        mContext = getContext();
         monitorListView = monitorFragmentView.findViewById(R.id.monitor_listview);
-        monitorData = new ArrayList<MonitorItem>();
-        restrictedAppFromSystem = new ArrayList<>();
-        appUsageDataUtils = new AppUsageDataUtils(Objects.requireNonNull(getContext()));
-        restrictedAppFromSystem = AppUsageDataUtils.getRestrictedAppsInfoFromSystem();
-        for (ApplicationInfo a : restrictedAppFromSystem) {
-            MonitorItem monitorItem = new MonitorItem(
-                    "2 Hr",
-                    " Normal",
-                    appUsageDataUtils.getPackageManager().getApplicationLabel(a).toString(),
-                    a.loadIcon(appUsageDataUtils.getPackageManager()),
-                    50);
-            monitorData.add(monitorItem);
-            Log.i(TAG, "onCreateView: " + monitorItem.getLogForItem());
-        }
-        monitorAdapter = new MonitorAdapter(getContext(), monitorData);
-        monitorListView.setAdapter(monitorAdapter);
-        monitorListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MonitorItem item = monitorData.get(position);
-                Toast.makeText(getContext(), "Item Clicked " + item.getAppName(), Toast.LENGTH_SHORT).show();
-            }
-        });
-
+        prepareDataForMonitorListView();
         return monitorFragmentView;
     }
 
@@ -87,5 +66,56 @@ public class MonitorFragment extends Fragment {
         super.onStop();
         Log.i(TAG, "onStart: Monitor Fragment Stopped");
 
+    }
+
+    private void prepareDataForMonitorListView() {
+        monitorData = new ArrayList<MonitorItem>();
+        restrictedAppFromSystem = new ArrayList<>();
+        appUsageDataUtils = new AppUsageDataUtils(mContext);
+        restrictedAppFromSystem = AppUsageDataUtils.getRestrictedAppsInfoFromSystem();
+        ArrayList<MonitorItem> dataSamples = new ArrayList<>();
+        dataSamples.add(new MonitorItem("3.00 Hr", "High", "", null, 75));
+        dataSamples.add(new MonitorItem("0.33 Hr", "Low", "", null, 8));
+        dataSamples.add(new MonitorItem("2.30 Hr", "High", "", null, 57));
+        dataSamples.add(new MonitorItem("0.40 Hr", "Low", "", null, 10));
+        dataSamples.add(new MonitorItem("3.30 Hr", "Extreme", "", null, 82));
+        dataSamples.add(new MonitorItem("2.15 Hr", "High", "", null, 53));
+        dataSamples.add(new MonitorItem("3.13 Hr", "Extreme", "", null, 78));
+        dataSamples.add(new MonitorItem("1.20 Hr", "Medium", "", null, 30));
+        dataSamples.add(new MonitorItem("0.42 Hr", "Low", "", null, 10));
+        dataSamples.add(new MonitorItem("3.30 Hr", "Extreme", "", null, 82));
+        dataSamples.add(new MonitorItem("1.36 Hr", "Medium", "", null, 34));
+        dataSamples.add(new MonitorItem("0.27 Hr", "Low", "", null, 6));
+        dataSamples.add(new MonitorItem("3.34 Hr", "Extreme", "", null, 83));
+        dataSamples.add(new MonitorItem("1.46 Hr", "Medium", "", null, 36));
+        dataSamples.add(new MonitorItem("3.54 Hr", "Extreme", "", null, 88));
+        dataSamples.add(new MonitorItem("2.33 Hr", "High", "", null, 58));
+        for (int i = 0; i < restrictedAppFromSystem.size(); i++) {
+            ApplicationInfo a = restrictedAppFromSystem.get(i);
+            MonitorItem m = dataSamples.get(i);
+            m.setAppName(appUsageDataUtils.getPackageManager().getApplicationLabel(a).toString());
+            m.setAppIcon(a.loadIcon(appUsageDataUtils.getPackageManager()));
+            monitorData.add(m);
+            Log.i(TAG, "onCreateView: " + m.getLogForItem());
+        }
+        /*for (ApplicationInfo a : restrictedAppFromSystem) {
+            MonitorItem monitorItem = new MonitorItem(
+                    "2 Hr",
+                    " Normal",
+                    appUsageDataUtils.getPackageManager().getApplicationLabel(a).toString(),
+                    a.loadIcon(appUsageDataUtils.getPackageManager()),
+                    50);
+            monitorData.add(monitorItem);
+            Log.i(TAG, "onCreateView: " + monitorItem.getLogForItem());
+        }*/
+        monitorAdapter = new MonitorAdapter(getContext(), monitorData);
+        monitorListView.setAdapter(monitorAdapter);
+        monitorListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                MonitorItem item = monitorData.get(position);
+                Toast.makeText(getContext(), "Item Clicked " + item.getAppName(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
