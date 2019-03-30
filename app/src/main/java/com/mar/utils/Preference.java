@@ -7,11 +7,11 @@ import android.content.SharedPreferences;
 public class Preference {
     // String Value Variable for Assigning SharedPreference File Name
     private static final String PreferenceFileName = "com.mar.MARSharedPreference";
-
     //Static Key Values For Preferences <Key,Value>
     private static String AccessUsagePermissionStatus = "AccessUsagePermissionStatus";
     private static String IsOpenedFirstTime = "IsOpenedFirstTime";
-
+    private static String IsAppLockPinSet = "IsAppLockPinSet";
+    private static String AppLockPin = "AppLockPin";
     //SharedPreference Api for Persistent data consumption
     private static SharedPreferences mSharedPreferences;
     private static SharedPreferences.Editor mEditor;
@@ -22,19 +22,35 @@ public class Preference {
         mEditor = mSharedPreferences.edit();
     }
 
-    public static Boolean getAccessUsagePermissionStatus() {
+    public int getAppLockPin() {
+        return mSharedPreferences.getInt(AppLockPin, 1234);
+    }
+
+    public void setAppLockPin(int appLockPin) {
+        mEditor.putInt(AppLockPin, appLockPin);
+    }
+
+    public boolean getIsAppLockPinSet() {
+        return mSharedPreferences.getBoolean(IsAppLockPinSet, false);
+    }
+
+    public void setIsAppLockPinSet(boolean isAppLockPinSet) {
+        mEditor.putBoolean(IsAppLockPinSet, isAppLockPinSet).commit();
+    }
+
+    public boolean getAccessUsagePermissionStatus() {
         return mSharedPreferences.getBoolean(AccessUsagePermissionStatus, false);
     }
 
-    public static void setAccessUsagePermissionStatus(Boolean accessUsagePermissionStatus) {
+    public void setAccessUsagePermissionStatus(Boolean accessUsagePermissionStatus) {
         mEditor.putBoolean(AccessUsagePermissionStatus, accessUsagePermissionStatus).commit();
     }
 
-    public static Boolean getIsOpenedFirstTime() {
+    public boolean getIsOpenedFirstTime() {
         return mSharedPreferences.getBoolean(IsOpenedFirstTime, false);
     }
 
-    public static void setIsOpenedFirstTime(Boolean isOpenedFirstTime) {
+    public void setIsOpenedFirstTime(Boolean isOpenedFirstTime) {
         mEditor.putBoolean(IsOpenedFirstTime, isOpenedFirstTime).commit();
     }
 }

@@ -18,6 +18,7 @@ import com.mar.R;
 import com.mar.adapters.MonitorAdapter;
 import com.mar.model.MonitorItem;
 import com.mar.utils.AppUsageDataUtils;
+import com.mar.utils.MultipleListUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,6 @@ public class MonitorFragment extends Fragment {
     public void onResume() {
         super.onResume();
         Log.i(TAG, "onStart: Monitor Fragment Resumed");
-
     }
 
     @Nullable
@@ -110,6 +110,7 @@ public class MonitorFragment extends Fragment {
         }*/
         monitorAdapter = new MonitorAdapter(getContext(), monitorData);
         monitorListView.setAdapter(monitorAdapter);
+        MultipleListUtil.setListViewHeightBasedOnChildren(monitorListView);
         monitorListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

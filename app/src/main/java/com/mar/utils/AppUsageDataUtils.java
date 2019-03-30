@@ -54,8 +54,6 @@ public class AppUsageDataUtils {
     public PackageManager getPackageManager() {
         if (packageManager == null) {
             packageManager = mContext.getPackageManager();
-        } else {
-            Log.i(TAG, "getPackageManager: PackageManager Already Initialized");
         }
         return packageManager;
     }
