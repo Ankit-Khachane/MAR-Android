@@ -11,11 +11,13 @@ import java.util.List;
 public class AppUsageDataUtils {
     private static final String TAG = "AppUsageDataUtils";
     private static List<ApplicationInfo> mApplicationInfo = null;
+    private static List<String> mInstalledRestrictedApps = null;
     private static PackageManager packageManager;
     private Context mContext;
 
     public AppUsageDataUtils(Context context) {
         mApplicationInfo = new ArrayList<>();
+        mInstalledRestrictedApps = new ArrayList<>();
         this.mContext = context;
         packageManager = context.getPackageManager();
     }
@@ -49,6 +51,19 @@ public class AppUsageDataUtils {
             }
         }
         return mApplicationInfo;
+    }
+
+    public static List<String> getInstalledRestrictedAppsFromSystem() {
+        List<ApplicationInfo> list = packageManager.getInstalledApplications(0);
+        ArrayList<String> restrictedApps = RestrictedAppsRepo.getRestrictedAppList();
+        if (list != null) {
+            for (ApplicationInfo ainfos : list) {
+                if (restrictedApps.contains(ainfos.packageName)) {
+                    mInstalledRestrictedApps.add(ainfos.packageName);
+                }
+            }
+        }
+        return mInstalledRestrictedApps;
     }
 
     public PackageManager getPackageManager() {

@@ -1,8 +1,12 @@
 package com.mar;
 
+import android.app.usage.UsageEvents;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -31,7 +35,12 @@ import com.mar.fragments.AnalysisFragment;
 import com.mar.fragments.MonitorFragment;
 import com.mar.fragments.RestrictionFragment;
 import com.mar.services.AppLockService;
+import com.mar.utils.AppUsageDataUtils;
 import com.mar.utils.Preference;
+
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
 
 public class MainSwipeableActivity extends AppCompatActivity {
     public static final int usage_access_request = 8898;
@@ -116,19 +125,20 @@ public class MainSwipeableActivity extends AppCompatActivity {
         }
     }
 
-    public void lockapps(View view) {
+    public void lockApps(View view) {
         if (!preference.getIsAppLockPinSet()) {
             showPinDialog(1);
         } else {
             startService(serviceintent);
+            new FetchUsageData().execute();
             Snackbar.make(coordinatorLayout, "Apps are Already Locked With Pin", Snackbar.LENGTH_SHORT).show();
         }
-        Log.i(TAG, "lockapps: service started directly by using stored pin");
+        Log.i(TAG, "lockApps: service started directly by using stored pin");
     }
 
-    public void unlockapps(View view) {
+    public void unlockApps(View view) {
         showPinDialog(2);
-        Log.i(TAG, "unlockapps: service stopped directly by skipping pin");
+        Log.i(TAG, "unlockApps: service stopped directly by skipping pin");
     }
 
     public void showPinDialog(int action) {
@@ -257,6 +267,50 @@ public class MainSwipeableActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             return 3;
+        }
+    }
+
+    public class FetchUsageData extends AsyncTask<Void, Void, Void> {
+        UsageStatsManager usageStatsManager;
+        AppUsageDataUtils dataUtils;
+        UsageEvents usageEvents;
+        Map<String, UsageStats> stats;
+        List<String> installedRestrictedApps;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            //get basic variables of phone like usagemamger,databasemanager,models list etc.
+            usageStatsManager = (UsageStatsManager) MainSwipeableActivity.this.getSystemService(USAGE_STATS_SERVICE);
+            //appdatautils initialization
+            installedRestrictedApps = AppUsageDataUtils.getInstalledRestrictedAppsFromSystem();
+            //time range for usage rocord for last 30 days
+            Calendar calendar = Calendar.getInstance();
+            calendar.add(Calendar.MONTH, -1);
+            long start = calendar.getTimeInMillis();
+            long end = System.currentTimeMillis();
+            String restricted_app_name = "com.google.android.gm";
+            stats = usageStatsManager.queryAndAggregateUsageStats(start, end);
+
+
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            //perform fetching and calculating of data on usagemanager based on model and store data to database
+            for (int i = 0; i < installedRestrictedApps.size(); i++) {
+                UsageStats usageStats = stats.get(installedRestrictedApps.get(i));
+                assert usageStats != null;
+                Log.d(TAG, "getStatsForLoop : -- " + " count - " + i + " App is = " + usageStats.getPackageName() + " -- " + usageStats.getTotalTimeInForeground());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void v) {
+            super.onPostExecute(v);
+            //give acknowledgment to user about the data base creation using snackbar
+            Snackbar.make(coordinatorLayout, "Data is Fetched", Snackbar.LENGTH_SHORT).show();
         }
     }
 }

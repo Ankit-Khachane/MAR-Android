@@ -22,7 +22,7 @@ public class RestrictedAppsRepo {
         if (restrictedAppList.isEmpty()) {
             restrictedAppList.add(0, "com.snapchat.android");
             restrictedAppList.add(1, "com.whatsapp");
-            restrictedAppList.add(2, "com.bsb.hike");
+            restrictedAppList.add(2, "com.netflix.mediaclient");
             restrictedAppList.add(3, "com.facebook.katana");
             restrictedAppList.add(4, "com.facebook.lite");
             restrictedAppList.add(5, "com.facebook.orca");
@@ -34,7 +34,6 @@ public class RestrictedAppsRepo {
             restrictedAppList.add(11, "com.zhiliaoapp.musically");
             restrictedAppList.add(12, "com.google.android.gm");
             restrictedAppList.add(13, "com.google.android.youtube");
-            restrictedAppList.add(14, "com.netflix.mediaclient");
             Log.i(TAG, "getRestrictedAppList: Restricted Apps List  Is created and Filled");
             return restrictedAppList;
         } else {
