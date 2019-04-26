@@ -14,9 +14,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.mar.MainSwipeableActivity;
 import com.mar.R;
 import com.mar.adapters.MonitorAdapter;
-import com.mar.model.MonitorItem;
+import com.mar.model.AppModel;
 import com.mar.utils.AppUsageDataUtils;
 import com.mar.utils.MultipleListUtil;
 
@@ -27,7 +28,7 @@ public class MonitorFragment extends Fragment {
     private static final String TAG = "MonitorFragment";
     private ListView monitorListView;
     private MonitorAdapter monitorAdapter;
-    private ArrayList<MonitorItem> monitorData;
+    private ArrayList<AppModel> monitorData;
     private List<ApplicationInfo> restrictedAppFromSystem;
     private AppUsageDataUtils appUsageDataUtils;
     private Context mContext;
@@ -69,11 +70,9 @@ public class MonitorFragment extends Fragment {
     }
 
     private void prepareDataForMonitorListView() {
-        monitorData = new ArrayList<MonitorItem>();
+        monitorData = new ArrayList<AppModel>();
         restrictedAppFromSystem = new ArrayList<>();
-        appUsageDataUtils = new AppUsageDataUtils(mContext);
-        restrictedAppFromSystem = AppUsageDataUtils.getRestrictedAppsInfoFromSystem();
-        ArrayList<MonitorItem> dataSamples = new ArrayList<>();
+       /* ArrayList<MonitorItem> dataSamples = new ArrayList<>();
         dataSamples.add(new MonitorItem("3.00 Hr", "High", "", null, 75));
         dataSamples.add(new MonitorItem("0.33 Hr", "Low", "", null, 8));
         dataSamples.add(new MonitorItem("2.30 Hr", "High", "", null, 57));
@@ -97,25 +96,16 @@ public class MonitorFragment extends Fragment {
             m.setAppIcon(a.loadIcon(appUsageDataUtils.getPackageManager()));
             monitorData.add(m);
             Log.i(TAG, "onCreateView: " + m.getLogForItem());
-        }
-        /*for (ApplicationInfo a : restrictedAppFromSystem) {
-            MonitorItem monitorItem = new MonitorItem(
-                    "2 Hr",
-                    " Normal",
-                    appUsageDataUtils.getPackageManager().getApplicationLabel(a).toString(),
-                    a.loadIcon(appUsageDataUtils.getPackageManager()),
-                    50);
-            monitorData.add(monitorItem);
-            Log.i(TAG, "onCreateView: " + monitorItem.getLogForItem());
         }*/
+        monitorData.addAll(MainSwipeableActivity.persistenceData);
         monitorAdapter = new MonitorAdapter(getContext(), monitorData);
         monitorListView.setAdapter(monitorAdapter);
         MultipleListUtil.setListViewHeightBasedOnChildren(monitorListView);
         monitorListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                MonitorItem item = monitorData.get(position);
-                Toast.makeText(getContext(), "Item Clicked " + item.getAppName(), Toast.LENGTH_SHORT).show();
+                AppModel item = monitorData.get(position);
+                Toast.makeText(getContext(), "" + item.getAppName(), Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -11,15 +11,15 @@ import android.widget.TextView;
 
 import com.github.lzyzsd.circleprogress.DonutProgress;
 import com.mar.R;
-import com.mar.model.MonitorItem;
+import com.mar.model.AppModel;
 
 import java.util.ArrayList;
 
-public class MonitorAdapter extends ArrayAdapter<MonitorItem> {
-    private ArrayList<MonitorItem> mList;
+public class MonitorAdapter extends ArrayAdapter<AppModel> {
+    private ArrayList<AppModel> mList;
     private Context mContext;
 
-    public MonitorAdapter(Context context, ArrayList<MonitorItem> list) {
+    public MonitorAdapter(Context context, ArrayList<AppModel> list) {
         super(context, R.layout.item_monitor_listview, list);
         this.mContext = context;
         this.mList = list;
@@ -28,7 +28,7 @@ public class MonitorAdapter extends ArrayAdapter<MonitorItem> {
     @NonNull
     @Override
     public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-        MonitorItem item = getItem(position);
+        AppModel item = getItem(position);
         MonitorViewHolder mvh;
         final View monitorView;
         if (convertView == null) {
@@ -47,33 +47,37 @@ public class MonitorAdapter extends ArrayAdapter<MonitorItem> {
         }
 
         assert item != null;
-        mvh.daily_average_value_tv.setText(item.getDailyAverageUser());
-        mvh.usage_level_value_tv.setText(item.getUserLevel());
+        // TODO: 26-04-2019 Adapt the appModel data to monitor listView item
+        mvh.daily_average_value_tv.setText(item.getUsageCount());
+
+        mvh.usage_level_value_tv.setText(item.getUsageLevel());
+
         mvh.app_icon_iv.setImageDrawable(item.getAppIcon());
-        float progress = item.getProgressValue();
-        if (progress <= 25) {
-            mvh.circularProgress.setProgress(progress);
+
+        String progress = item.getUsageOfApp();
+
+        if (progress.equals("Low")) {
+            mvh.circularProgress.setProgress(item.getUsageInPercent());
             mvh.circularProgress.setTextColor(mContext.getResources().getColor(R.color.low_usage));
             mvh.circularProgress.setFinishedStrokeColor(mContext.getResources().getColor(R.color.low_usage));
-        } else if (progress >= 25 && progress <= 50) {
-            mvh.circularProgress.setProgress(progress);
+        } else if (progress.equals("Medium")) {
+            mvh.circularProgress.setProgress(item.getUsageInPercent());
             mvh.circularProgress.setTextColor(mContext.getResources().getColor(R.color.medium_usage));
             mvh.circularProgress.setFinishedStrokeColor(mContext.getResources().getColor(R.color.medium_usage));
-        } else if (progress >= 50 && progress <= 75) {
-            mvh.circularProgress.setProgress(progress);
+        } else if (progress.equals("High")) {
+            mvh.circularProgress.setProgress(item.getUsageInPercent());
             mvh.circularProgress.setTextColor(mContext.getResources().getColor(R.color.high_usage));
             mvh.circularProgress.setFinishedStrokeColor(mContext.getResources().getColor(R.color.high_usage));
-        } else if (progress >= 75) {
-            mvh.circularProgress.setProgress(progress);
+        } else if (progress.equals("Extreme")) {
+            mvh.circularProgress.setProgress(item.getUsageInPercent());
             mvh.circularProgress.setTextColor(mContext.getResources().getColor(R.color.extreme_usage));
             mvh.circularProgress.setFinishedStrokeColor(mContext.getResources().getColor(R.color.extreme_usage));
         }
-        mvh.circularProgress.setProgress(progress);
         return convertView;
     }
 
     @Override
-    public MonitorItem getItem(int position) {
+    public AppModel getItem(int position) {
         return mList.get(position);
     }
 

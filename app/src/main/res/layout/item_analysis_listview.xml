@@ -58,6 +58,7 @@
         android:layout_toEndOf="@+id/addiction_level_tv"
         android:gravity="center_vertical"
         android:paddingEnd="5dp"
+        android:singleLine="true"
         android:text="2 hr"
         android:textAlignment="textEnd"
         android:textSize="18sp"

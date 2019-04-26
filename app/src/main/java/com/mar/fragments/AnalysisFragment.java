@@ -1,7 +1,9 @@
 package com.mar.fragments;
 
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,17 +17,22 @@ import android.widget.ListView;
 import android.widget.Spinner;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IValueFormatter;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
+import com.mar.MainSwipeableActivity;
 import com.mar.R;
 import com.mar.adapters.AnalysisAdapter;
-import com.mar.model.AnalysisItem;
+import com.mar.model.AppModel;
 import com.mar.utils.AppUsageDataUtils;
 import com.mar.utils.MultipleListUtil;
 
@@ -40,9 +47,11 @@ public class AnalysisFragment extends Fragment {
     protected BarChart barChart;
     protected ListView safeUsageListView;
     protected ListView unsafeUsageListView;
-    private ArrayList<AnalysisItem> safeApps;
-    private ArrayList<AnalysisItem> unsafeApps;
+    public static ArrayList<AppModel> safeApps;
+    public static ArrayList<AppModel> unsafeApps;
     private Context mContext;
+    List<AppModel> appsInfoFromSystem;
+    private List<AppModel> data;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -54,6 +63,7 @@ public class AnalysisFragment extends Fragment {
         initView(fragmentView);
         prepareTimeRangeSpinner();
         prepareBarChartData();
+        appsInfoFromSystem = MainSwipeableActivity.persistenceData;
         prepareSafeUsageAppsListData();
         prepareUnsafeUsageAppsListData();
 
@@ -76,27 +86,38 @@ public class AnalysisFragment extends Fragment {
     }
 
     public void prepareBarChartData() {
-        List<BarEntry> NoOfEmp = new ArrayList<BarEntry>();
+        List<BarEntry> NoOfApp = new ArrayList<BarEntry>();
 
-        NoOfEmp.add(new BarEntry(70f, 10, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
-        NoOfEmp.add(new BarEntry(80f, 14, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
-        NoOfEmp.add(new BarEntry(90f, 12, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
-        NoOfEmp.add(new BarEntry(100f, 13, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
-        NoOfEmp.add(new BarEntry(110f, 14, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
-        NoOfEmp.add(new BarEntry(120f, 15, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
-        NoOfEmp.add(new BarEntry(130f, 16, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
-        NoOfEmp.add(new BarEntry(140f, 17, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
-        NoOfEmp.add(new BarEntry(150f, 18, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
-        NoOfEmp.add(new BarEntry(160f, 19, getResources().getDrawable(R.drawable.ic_lock_locked_black_36dp)));
+        /*NoOfApp.add(new BarEntry(70f, 10));
+        NoOfApp.add(new BarEntry(180f, 20));
+        NoOfApp.add(new BarEntry(90f, 30));
+        NoOfApp.add(new BarEntry(100f, 40));
+        NoOfApp.add(new BarEntry(110f, 50));
+        NoOfApp.add(new BarEntry(120f, 60));
+        NoOfApp.add(new BarEntry(130f, 70));
+        NoOfApp.add(new BarEntry(140f, 80));
+        NoOfApp.add(new BarEntry(50f, 90));
+        NoOfApp.add(new BarEntry(160f, 100));*/
+        data = MainSwipeableActivity.persistenceData;
+        for (int i = 0; i < data.size(); i++) {
+            AppModel am = data.get(i);
+            Drawable ab = am.getAppIcon();
+            Bitmap bitmapDrawable = ((BitmapDrawable) ab).getBitmap();
+            Bitmap b = Bitmap.createScaledBitmap(bitmapDrawable, 56, 56, false);
+            ab = new BitmapDrawable(getResources(), b);
+            NoOfApp.add(new BarEntry(i + 1, am.getUsageInPercent(), ab));
+        }
 
-        BarDataSet barDataSet = new BarDataSet(NoOfEmp, "App Usage");
+        BarDataSet barDataSet = new BarDataSet(NoOfApp, "App Usage");
         barDataSet.setColors(ColorTemplate.MATERIAL_COLORS);
         barDataSet.setValueTextSize(16);
+        barDataSet.setDrawValues(false);
         barDataSet.setHighlightEnabled(false);
-        barDataSet.setDrawIcons(false);
+        barDataSet.setDrawIcons(true);
+
 
         BarData barData = new BarData(barDataSet);
-        barData.setBarWidth(5);
+//        barData.setBarWidth(5);
         barData.setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
@@ -104,7 +125,10 @@ public class AnalysisFragment extends Fragment {
                 return decimalFormat.format(value) + " %";
             }
         });
+
         barChart.setData(barData);
+        barChart.getDescription().setEnabled(false);
+//        barChart.setMaxVisibleValueCount(14);
         barChart.getXAxis().setDrawGridLines(false);
         barChart.getAxisLeft().setDrawGridLines(false);
         barChart.getAxisRight().setDrawGridLines(false);
@@ -114,23 +138,36 @@ public class AnalysisFragment extends Fragment {
 
         XAxis x = barChart.getXAxis();
         x.setPosition(XAxis.XAxisPosition.BOTTOM);
+
+        YAxis yl = barChart.getAxisLeft();
+        yl.setDrawAxisLine(false);
+        yl.setDrawLabels(false);
+//        yl.setLabelCount(10);
+
+        YAxis yr = barChart.getAxisRight();
+        yr.setDrawAxisLine(true);
+        yr.setDrawLabels(true);
+        yr.setValueFormatter(new IAxisValueFormatter() {
+            @Override
+            public String getFormattedValue(float value, AxisBase axis) {
+                DecimalFormat decimalFormat = new DecimalFormat();
+                return decimalFormat.format(value) + " %";
+            }
+        });
+//        yr.setLabelCount(10);
+
+        Legend l = barChart.getLegend();
+        l.setEnabled(false);
+
         Log.i(TAG, "prepareBarChartData: BarChart DataSet Good To Go !!!");
     }
 
     public void prepareSafeUsageAppsListData() {
-        safeApps = new ArrayList<AnalysisItem>();
-        List<ApplicationInfo> appsInfoFromSystem = AppUsageDataUtils.getRestrictedAppsInfoFromSystem();
-        int i = 4;
-        while (i < appsInfoFromSystem.size()) {
-            ApplicationInfo a = appsInfoFromSystem.get(i);
-            AnalysisItem aItem = new AnalysisItem(
-                    appUsageDataUtils.getPackageManager().getApplicationLabel(a).toString(),
-                    "Normal",
-                    "30 min",
-                    appUsageDataUtils.getPackageManager().getApplicationIcon(a)
-            );
-            safeApps.add(aItem);
-            i++;
+        safeApps = new ArrayList<AppModel>();
+        for (AppModel am : appsInfoFromSystem) {
+            if (am.getUsageOfApp().equals("Low") || am.getUsageOfApp().equals("Medium")) {
+                safeApps.add(am);
+            }
         }
         AnalysisAdapter safeAdapter = new AnalysisAdapter(mContext, safeApps, AnalysisAdapter.AnalysisListType.SAFE);
         safeUsageListView.setAdapter(safeAdapter);
@@ -139,20 +176,10 @@ public class AnalysisFragment extends Fragment {
     }
 
     public void prepareUnsafeUsageAppsListData() {
-        unsafeApps = new ArrayList<AnalysisItem>();
-        List<ApplicationInfo> appsInfoFromSystem = AppUsageDataUtils.getRestrictedAppsInfoFromSystem();
-        int i = 1;
-        if (appsInfoFromSystem.size() >= 3) {
-            while (i <= 3) {
-                ApplicationInfo a = appsInfoFromSystem.get(i);
-                AnalysisItem aItem = new AnalysisItem(
-                        appUsageDataUtils.getPackageManager().getApplicationLabel(a).toString(),
-                        "High",
-                        "3 Hr",
-                        appUsageDataUtils.getPackageManager().getApplicationIcon(a)
-                );
-                unsafeApps.add(aItem);
-                i++;
+        unsafeApps = new ArrayList<AppModel>();
+        for (AppModel am : appsInfoFromSystem) {
+            if (am.getUsageOfApp().equals("High") || am.getUsageOfApp().equals("Extreme")) {
+                unsafeApps.add(am);
             }
         }
         AnalysisAdapter unsafeAdapter = new AnalysisAdapter(mContext, unsafeApps, AnalysisAdapter.AnalysisListType.UNSAFE);

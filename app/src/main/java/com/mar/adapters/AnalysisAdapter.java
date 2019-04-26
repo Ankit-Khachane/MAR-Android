@@ -10,19 +10,19 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.mar.R;
-import com.mar.model.AnalysisItem;
+import com.mar.model.AppModel;
 
 import java.util.ArrayList;
 
-public class AnalysisAdapter extends ArrayAdapter<AnalysisItem> {
+public class AnalysisAdapter extends ArrayAdapter<AppModel> {
     private static final String TAG = "AnalysisAdapter";
     private Context mContext;
     private String listType;
-    private ArrayList<AnalysisItem> safeUsage;
-    private ArrayList<AnalysisItem> unsafeUsage;
+    private ArrayList<AppModel> safeUsage;
+    private ArrayList<AppModel> unsafeUsage;
     private LayoutInflater inflator;
 
-    public AnalysisAdapter(Context context, ArrayList<AnalysisItem> list, @NonNull String type) {
+    public AnalysisAdapter(Context context, ArrayList<AppModel> list, @NonNull String type) {
         super(context, R.layout.item_analysis_listview, list);
         this.mContext = context;
         inflator = LayoutInflater.from(mContext);
@@ -35,11 +35,10 @@ public class AnalysisAdapter extends ArrayAdapter<AnalysisItem> {
         }
     }
 
-
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        AnalysisItem item = getItem(position);
+        AppModel item = getItem(position);
         AnalysisViewHolder holder;
         final View analysisusageview;
         if (convertView == null) {
@@ -52,13 +51,31 @@ public class AnalysisAdapter extends ArrayAdapter<AnalysisItem> {
         assert item != null;
         holder.appIconIv.setImageDrawable(item.getAppIcon());
         holder.appNameTv.setText(item.getAppName());
-        holder.addictionLevelTv.setText(item.getAddictionLevel());
-        holder.usageTimeTv.setText(item.getUsageTime());
+
+        String level = item.getUsageOfApp();
+        if (level.equals("Low")) {
+            holder.addictionLevelTv.setText(level);
+            holder.addictionLevelTv.setTextColor(mContext.getResources().getColor(R.color.low_usage));
+        }
+        if (level.equals("Medium")) {
+            holder.addictionLevelTv.setText(level);
+            holder.addictionLevelTv.setTextColor(mContext.getResources().getColor(R.color.medium_usage));
+        }
+        if (level.equals("High")) {
+            holder.addictionLevelTv.setText(level);
+            holder.addictionLevelTv.setTextColor(mContext.getResources().getColor(R.color.high_usage));
+        }
+        if (level.equals("Extreme")) {
+            holder.addictionLevelTv.setText(level);
+            holder.addictionLevelTv.setTextColor(mContext.getResources().getColor(R.color.extreme_usage));
+        }
+
+        holder.usageTimeTv.setText(item.getUsageCount());
         return convertView;
     }
 
     @Override
-    public AnalysisItem getItem(int position) {
+    public AppModel getItem(int position) {
         if (listType.equals(AnalysisListType.SAFE)) {
             return safeUsage.get(position);
         }

@@ -19,8 +19,10 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.IValueFormatter;
+import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.mar.R;
+import com.mar.model.AppModel;
 import com.mar.services.AppLockService;
 
 import java.text.DecimalFormat;
@@ -35,6 +37,8 @@ public class RestrictionFragment extends Fragment {
     private List<Integer> colorlist;
     private Intent serviceintent;
     private Button lock_btn, unlock_btn;
+    private List<AppModel> data;
+    private ArrayList<AppModel> unsafeApps;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -45,22 +49,29 @@ public class RestrictionFragment extends Fragment {
         lock_btn = fragmentView.findViewById(R.id.btn_lock);
         unlock_btn = fragmentView.findViewById(R.id.btn_unlock);
         pieChart.animateXY(1000, 2000, Easing.EaseInOutSine);
+        pieChart.getDescription().setEnabled(false);
 
         pieEntries = new ArrayList<PieEntry>();
-        pieEntries.add(0, new PieEntry(34.5f, "WhatsApp"));
+        /*pieEntries.add(0, new PieEntry(34.5f, "WhatsApp"));
         pieEntries.add(1, new PieEntry(25, "Facebook"));
         pieEntries.add(2, new PieEntry(25, "Instagram"));
-        pieEntries.add(3, new PieEntry(15.5f, "Tik Tok"));
+        pieEntries.add(3, new PieEntry(15.5f, "Tik Tok"));*/
+        unsafeApps = AnalysisFragment.unsafeApps;
+        for (int i = 0; i < unsafeApps.size(); i++) {
+            AppModel am = unsafeApps.get(i);
+            assert am != null;
+            pieEntries.add(i, new PieEntry(am.getUsageInPercent(), am.getAppName()));
+        }
 
-        pieDataSet = new PieDataSet(pieEntries, "App Usage PieChart");
+        pieDataSet = new PieDataSet(pieEntries, "Unsafe !");
 
-        colorlist = new ArrayList<>();
+        /*colorlist = new ArrayList<>();
         colorlist.add(getResources().getColor(R.color.whatsapp_color));
         colorlist.add(getResources().getColor(R.color.facebook_color));
         colorlist.add(getResources().getColor(R.color.instagram_color));
         colorlist.add(getResources().getColor(R.color.tiktok_color));
-
-        pieDataSet.setColors(colorlist);
+*/
+        pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         pieDataSet.setValueTextColor(Color.WHITE);
         pieDataSet.setValueTextSize(18);
         pieDataSet.setFormSize(16);

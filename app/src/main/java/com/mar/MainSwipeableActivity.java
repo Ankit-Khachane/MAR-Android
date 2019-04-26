@@ -5,8 +5,9 @@ import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -34,10 +35,12 @@ import com.mar.appmonitor.AppMonitorUtil;
 import com.mar.fragments.AnalysisFragment;
 import com.mar.fragments.MonitorFragment;
 import com.mar.fragments.RestrictionFragment;
+import com.mar.model.AppModel;
 import com.mar.services.AppLockService;
 import com.mar.utils.AppUsageDataUtils;
 import com.mar.utils.Preference;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -46,10 +49,18 @@ public class MainSwipeableActivity extends AppCompatActivity {
     public static final int usage_access_request = 8898;
     public static final int draw_over_other_app_request = 9989;
     private static final String TAG = "MainSwipeableActivity";
+    public static List<AppModel> persistenceData;
     private Intent serviceintent;
     private CoordinatorLayout coordinatorLayout;
     private AlertDialog alertDialog;
     private Preference preference;
+    public static float totalUsage = 0;
+    private AppUsageDataUtils dataUtils;
+    private UsageStatsManager usageStatsManager;
+    private UsageEvents usageEvents;
+    private Map<String, UsageStats> stats;
+    private List<String> restrictedAppsNames;
+    private List<ApplicationInfo> restrictedAppInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +71,7 @@ public class MainSwipeableActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         serviceintent = new Intent(this, AppLockService.class);
         preference = new Preference(this);
+        persistenceData = new ArrayList<>();
         if (AppMonitorUtil.hasUsageStatsPermission(getApplicationContext()) &&
                 AppMonitorUtil.hasDrawOverOtherAppPermission(getApplicationContext())) {
             Log.i(TAG, "run: Usage Permission Granted Draw Over Other App is Allowed");
@@ -77,6 +89,52 @@ public class MainSwipeableActivity extends AppCompatActivity {
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+        dataUtils = new AppUsageDataUtils(this);
+        usageStatsManager = (UsageStatsManager) this.getSystemService(USAGE_STATS_SERVICE);
+        restrictedAppsNames = AppUsageDataUtils.getInstalledRestrictedAppsFromSystem();
+        restrictedAppInfo = AppUsageDataUtils.getRestrictedAppsInfoFromSystem();
+        //time range for usage rocord for last 30 days
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -1);
+        long start = calendar.getTimeInMillis();
+        long end = System.currentTimeMillis();
+        String restricted_app_name = "com.google.android.gm";
+        stats = usageStatsManager.queryAndAggregateUsageStats(start, end);
+        for (int i = 0; i < restrictedAppsNames.size(); i++) {
+            String targetApp = restrictedAppsNames.get(i);
+            UsageStats usageStats = stats.get(targetApp);
+            assert usageStats != null;
+            AppModel appModel = new AppModel(usageStats.getPackageName(), usageStats.getTotalTimeInForeground());
+            persistenceData.add(appModel);
+            Log.d(TAG, "getStatsForLoop : -- " + " count - " + i + " App is = " + usageStats.getPackageName() + " -- " + usageStats.getTotalTimeInForeground());
+        }
+        int i = 1;
+        for (ApplicationInfo a : restrictedAppInfo) {
+            String packagename = a.packageName;
+            Log.d(TAG, "doInBackground: packagename - " + i + " - " + packagename);
+            String targetApp = dataUtils.getPackageManager().getApplicationLabel(a).toString();
+            Log.d(TAG, "doInBackground: targetApp - " + i + " - " + targetApp);
+            Drawable icon = dataUtils.getPackageManager().getApplicationIcon(a);
+            for (AppModel am : persistenceData) {
+                if (am.getPackageName().equals(packagename)) {
+                    Log.d(TAG, "doInBackground: InnerForEach  Found - " + i + " - " + am.getPackageName());
+                    am.setAppName(targetApp);
+                    am.setAppIcon(icon);
+                }
+            }
+            i++;
+        }
+        calculateTotalRestrictedAppusage();
+    }
+
+    private void calculateTotalRestrictedAppusage() {
+        long total = 0;
+        for (AppModel a : persistenceData) {
+            total += a.getUsageTimeMs();
+        }
+        long h = ((total / 1000) / 3600);
+        totalUsage = (int) h;
+        Log.d(TAG, "calculateTotalRestrictedAppusage: Totalusage in hr - " + totalUsage);
     }
 
     @Override
@@ -130,7 +188,6 @@ public class MainSwipeableActivity extends AppCompatActivity {
             showPinDialog(1);
         } else {
             startService(serviceintent);
-            new FetchUsageData().execute();
             Snackbar.make(coordinatorLayout, "Apps are Already Locked With Pin", Snackbar.LENGTH_SHORT).show();
         }
         Log.i(TAG, "lockApps: service started directly by using stored pin");
@@ -270,20 +327,18 @@ public class MainSwipeableActivity extends AppCompatActivity {
         }
     }
 
-    public class FetchUsageData extends AsyncTask<Void, Void, Void> {
-        UsageStatsManager usageStatsManager;
-        AppUsageDataUtils dataUtils;
+    /*public class FetchUsageData extends AsyncTask<Void, Void, Void> {
         UsageEvents usageEvents;
         Map<String, UsageStats> stats;
-        List<String> installedRestrictedApps;
+        List<String> restrictedAppsNames;
+        List<ApplicationInfo> restrictedAppInfo;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            //get basic variables of phone like usagemamger,databasemanager,models list etc.
-            usageStatsManager = (UsageStatsManager) MainSwipeableActivity.this.getSystemService(USAGE_STATS_SERVICE);
             //appdatautils initialization
-            installedRestrictedApps = AppUsageDataUtils.getInstalledRestrictedAppsFromSystem();
+            restrictedAppsNames = AppUsageDataUtils.getInstalledRestrictedAppsFromSystem();
+            restrictedAppInfo = AppUsageDataUtils.getRestrictedAppsInfoFromSystem();
             //time range for usage rocord for last 30 days
             Calendar calendar = Calendar.getInstance();
             calendar.add(Calendar.MONTH, -1);
@@ -291,17 +346,34 @@ public class MainSwipeableActivity extends AppCompatActivity {
             long end = System.currentTimeMillis();
             String restricted_app_name = "com.google.android.gm";
             stats = usageStatsManager.queryAndAggregateUsageStats(start, end);
-
-
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
-            //perform fetching and calculating of data on usagemanager based on model and store data to database
-            for (int i = 0; i < installedRestrictedApps.size(); i++) {
-                UsageStats usageStats = stats.get(installedRestrictedApps.get(i));
+            //perform fetching and calculating of data on usage manager based on model and store data to database
+            for (int i = 0; i < restrictedAppsNames.size(); i++) {
+                String targetApp = restrictedAppsNames.get(i);
+                UsageStats usageStats = stats.get(targetApp);
                 assert usageStats != null;
+                AppModel appModel = new AppModel(usageStats.getPackageName(), usageStats.getTotalTimeInForeground());
+                persistenceData.add(appModel);
                 Log.d(TAG, "getStatsForLoop : -- " + " count - " + i + " App is = " + usageStats.getPackageName() + " -- " + usageStats.getTotalTimeInForeground());
+            }
+            int i = 1;
+            for (ApplicationInfo a : restrictedAppInfo) {
+                String packagename = a.packageName;
+                Log.d(TAG, "doInBackground: packagename - " + i + " - " + packagename);
+                String targetApp = dataUtils.getPackageManager().getApplicationLabel(a).toString();
+                Log.d(TAG, "doInBackground: targetApp - " + i + " - " + targetApp);
+                Drawable icon = dataUtils.getPackageManager().getApplicationIcon(a);
+                for (AppModel am : persistenceData) {
+                    if (am.getPackageName().equals(packagename)) {
+                        Log.d(TAG, "doInBackground: InnerForEach  Found - " + i + " - " + am.getPackageName());
+                        am.setAppName(targetApp);
+                        am.setAppIcon(icon);
+                    }
+                }
+                i++;
             }
             return null;
         }
@@ -312,5 +384,5 @@ public class MainSwipeableActivity extends AppCompatActivity {
             //give acknowledgment to user about the data base creation using snackbar
             Snackbar.make(coordinatorLayout, "Data is Fetched", Snackbar.LENGTH_SHORT).show();
         }
-    }
+    }*/
 }
