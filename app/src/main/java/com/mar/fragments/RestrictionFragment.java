@@ -1,11 +1,11 @@
 package com.mar.fragments;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,28 +23,32 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 import com.mar.R;
 import com.mar.model.AppModel;
-import com.mar.services.AppLockService;
+import com.mar.utils.Preference;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 
 public class RestrictionFragment extends Fragment {
+    private static final String TAG = "RestrictionFragment";
     private PieChart pieChart;
     private List<PieEntry> pieEntries;
     private PieDataSet pieDataSet;
     private PieData pieData;
     private List<Integer> colorlist;
-    private Intent serviceintent;
     private Button lock_btn, unlock_btn;
     private List<AppModel> data;
     private ArrayList<AppModel> unsafeApps;
+    public static Set<String> lockedAppsPackages;
+    private Preference preference;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View fragmentView = inflater.inflate(R.layout.fragment_restriction, container, false);
         //add view element initialization code in this block
-        serviceintent = new Intent(getContext(), AppLockService.class);
         pieChart = fragmentView.findViewById(R.id.pie_chart_view);
         lock_btn = fragmentView.findViewById(R.id.btn_lock);
         unlock_btn = fragmentView.findViewById(R.id.btn_unlock);
@@ -52,25 +56,28 @@ public class RestrictionFragment extends Fragment {
         pieChart.getDescription().setEnabled(false);
 
         pieEntries = new ArrayList<PieEntry>();
-        /*pieEntries.add(0, new PieEntry(34.5f, "WhatsApp"));
-        pieEntries.add(1, new PieEntry(25, "Facebook"));
-        pieEntries.add(2, new PieEntry(25, "Instagram"));
-        pieEntries.add(3, new PieEntry(15.5f, "Tik Tok"));*/
+        lockedAppsPackages = new HashSet<>();
+        colorlist = new ArrayList<>();
+        //TODO DO PREFER DEFINED COLOR SET FOR RESTRICTED PACKAGES AND ASSIGN IT TO PIE CHART COLOR ASSET IN A LINEAR MANNER
+        preference = new Preference(Objects.requireNonNull(getContext()));
+
         unsafeApps = AnalysisFragment.unsafeApps;
         for (int i = 0; i < unsafeApps.size(); i++) {
             AppModel am = unsafeApps.get(i);
             assert am != null;
             pieEntries.add(i, new PieEntry(am.getUsageInPercent(), am.getAppName()));
+            lockedAppsPackages.add(am.getPackageName());
+        }
+        if (lockedAppsPackages.isEmpty()) {
+            Log.d(TAG, "onCreateView: lockedAppsPackages is Empty At " + TAG);
+        } else {
+            preference.setLockedApps(lockedAppsPackages);
+            Log.d(TAG, "onCreateView: lockedAppsPackages is Stored In Shared Preferences");
         }
 
         pieDataSet = new PieDataSet(pieEntries, "Unsafe !");
 
-        /*colorlist = new ArrayList<>();
-        colorlist.add(getResources().getColor(R.color.whatsapp_color));
-        colorlist.add(getResources().getColor(R.color.facebook_color));
-        colorlist.add(getResources().getColor(R.color.instagram_color));
-        colorlist.add(getResources().getColor(R.color.tiktok_color));
-*/
+
         pieDataSet.setColors(ColorTemplate.COLORFUL_COLORS);
         pieDataSet.setValueTextColor(Color.WHITE);
         pieDataSet.setValueTextSize(18);
@@ -80,7 +87,7 @@ public class RestrictionFragment extends Fragment {
         pieDataSet.setValueFormatter(new IValueFormatter() {
             @Override
             public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
-                DecimalFormat decimalFormat = new DecimalFormat();
+                DecimalFormat decimalFormat = new DecimalFormat("##");
                 return decimalFormat.format(value) + " %";
             }
         });

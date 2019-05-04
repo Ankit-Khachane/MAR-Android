@@ -19,10 +19,10 @@ import android.view.WindowManager;
 
 import com.mar.R;
 import com.mar.appmonitor.AppMonitorEngine;
-import com.mar.utils.RestrictedAppsRepo;
+import com.mar.utils.Preference;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class AppLockService extends Service {
     private static final String TAG = "AppLockService";
@@ -32,10 +32,12 @@ public class AppLockService extends Service {
     private WindowManager windowManager;
     private WindowManager.LayoutParams params = null;
     private View lock_page_view;
-    private String restricted_app_name = "com.google.android.gm";
-    private List<String> restricted_apps;
+    // TODO: 03-05-2019 work on fetching restricted app named from mainactivity to service class for static list of restricted apps
+//    private String restricted_app_name = "com.google.android.gm";
+    public Set<String> restricted_apps;
     private boolean isAppLocked;
     private boolean isRestrictedAppFound;
+    private Preference pref;
 
 
     public AppLockService() {
@@ -46,6 +48,9 @@ public class AppLockService extends Service {
         super.onCreate();
         isAppLocked = false;
         isRestrictedAppFound = false;
+        restricted_apps = new HashSet<>();
+        pref = new Preference(AppLockService.this);
+        restricted_apps.addAll(pref.getLockedApps());
         if (lock_page_view == null) {
             lock_page_view = LayoutInflater.from(this).inflate(R.layout.lock_view, null);
         }
@@ -91,8 +96,8 @@ public class AppLockService extends Service {
                 return false;
             }
         });
-        restricted_apps = new ArrayList<>();
-        restricted_apps.addAll(RestrictedAppsRepo.getRestrictedAppList());
+
+//        restricted_apps.addAll(RestrictedAppsRepo.getRestrictedAppList());
         /*restricted_apps.add("com.whatsapp");
         restricted_apps.add("com.facebook.katana");
         restricted_apps.add("com.instagram.android");

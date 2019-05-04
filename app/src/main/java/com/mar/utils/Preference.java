@@ -4,17 +4,20 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import java.util.Set;
+
 public class Preference {
     // String Value Variable for Assigning SharedPreference File Name
-    private static final String PreferenceFileName = "com.mar.MARSharedPreference";
+    private static final String PreferenceFileName = "MARSharedPreference";
     //Static Key Values For Preferences <Key,Value>
-    private static String AccessUsagePermissionStatus = "AccessUsagePermissionStatus";
-    private static String IsOpenedFirstTime = "IsOpenedFirstTime";
-    private static String IsAppLockPinSet = "IsAppLockPinSet";
-    private static String AppLockPin = "AppLockPin";
+    private String AccessUsagePermissionStatus = "AccessUsagePermissionStatus";
+    private String IsOpenedFirstTime = "IsOpenedFirstTime";
+    private String IsAppLockPinSet = "IsAppLockPinSet";
+    private String AppLockPin = "AppLockPin";
+    private String lockedApps = "LockedAppPackages";
     //SharedPreference Api for Persistent data consumption
-    private static SharedPreferences mSharedPreferences;
-    private static SharedPreferences.Editor mEditor;
+    private SharedPreferences mSharedPreferences;
+    private SharedPreferences.Editor mEditor;
 
     @SuppressLint("CommitPrefEdits")
     public Preference(Context context) {
@@ -52,5 +55,13 @@ public class Preference {
 
     public void setIsOpenedFirstTime(Boolean isOpenedFirstTime) {
         mEditor.putBoolean(IsOpenedFirstTime, isOpenedFirstTime).commit();
+    }
+
+    public Set<String> getLockedApps() {
+        return mSharedPreferences.getStringSet(lockedApps, null);
+    }
+
+    public void setLockedApps(Set<String> apps) {
+        mEditor.putStringSet(lockedApps, apps).commit();
     }
 }

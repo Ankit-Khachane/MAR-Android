@@ -88,16 +88,6 @@ public class AnalysisFragment extends Fragment {
     public void prepareBarChartData() {
         List<BarEntry> NoOfApp = new ArrayList<BarEntry>();
 
-        /*NoOfApp.add(new BarEntry(70f, 10));
-        NoOfApp.add(new BarEntry(180f, 20));
-        NoOfApp.add(new BarEntry(90f, 30));
-        NoOfApp.add(new BarEntry(100f, 40));
-        NoOfApp.add(new BarEntry(110f, 50));
-        NoOfApp.add(new BarEntry(120f, 60));
-        NoOfApp.add(new BarEntry(130f, 70));
-        NoOfApp.add(new BarEntry(140f, 80));
-        NoOfApp.add(new BarEntry(50f, 90));
-        NoOfApp.add(new BarEntry(160f, 100));*/
         data = MainSwipeableActivity.persistenceData;
         for (int i = 0; i < data.size(); i++) {
             AppModel am = data.get(i);
