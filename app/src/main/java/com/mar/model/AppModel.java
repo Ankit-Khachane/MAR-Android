@@ -10,22 +10,22 @@ import java.io.Serializable;
 public class AppModel implements Serializable {
     private static final String TAG = "AppModel";
     // TODO: 27-02-2019 Define App Details Model class and Database Codebase API
-    private String AppName;
     private static final int SECOND = 1000;
     private static final int MINUTE = 60 * SECOND;
-    private String PackageName;
     private static final int HOUR = 60 * MINUTE;
+    private String AppName;
+    private String PackageName;
     private Drawable appIcon;
     private long usageTimeMs;
     private int usagePercentage;
 
     public AppModel(String appName, Drawable appIcon) {
-        AppName = appName;
+        this.AppName = appName;
         this.appIcon = appIcon;
     }
 
     public AppModel(String packageName, long usageTimeMs) {
-        PackageName = packageName;
+        this.PackageName = packageName;
         this.usageTimeMs = usageTimeMs;
     }
 

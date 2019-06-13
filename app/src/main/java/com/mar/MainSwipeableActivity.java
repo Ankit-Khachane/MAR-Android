@@ -98,15 +98,17 @@ public class MainSwipeableActivity extends AppCompatActivity {
         calendar.add(Calendar.MONTH, -1);
         long start = calendar.getTimeInMillis();
         long end = System.currentTimeMillis();
-        String restricted_app_name = "com.google.android.gm";
         stats = usageStatsManager.queryAndAggregateUsageStats(start, end);
         for (int i = 0; i < restrictedAppsNames.size(); i++) {
             String targetApp = restrictedAppsNames.get(i);
             UsageStats usageStats = stats.get(targetApp);
-            assert usageStats != null;
-            AppModel appModel = new AppModel(usageStats.getPackageName(), usageStats.getTotalTimeInForeground());
-            persistenceData.add(appModel);
-            Log.d(TAG, "getStatsForLoop : -- " + " count - " + i + " App is = " + usageStats.getPackageName() + " -- " + usageStats.getTotalTimeInForeground());
+            if (usageStats != null) {
+                Log.d(TAG, "getStatsForLoop : -- " + " count - " + i + " App is = " + usageStats.getPackageName() + " -- " + usageStats.getTotalTimeInForeground());
+                AppModel appModel = new AppModel(usageStats.getPackageName(), usageStats.getTotalTimeInForeground());
+                persistenceData.add(appModel);
+            } else {
+                Log.d(TAG, "usage state is null ");
+            }
         }
         int i = 1;
         for (ApplicationInfo a : restrictedAppInfo) {

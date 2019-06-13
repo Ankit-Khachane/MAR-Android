@@ -1,9 +1,6 @@
 package com.mar.fragments;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -91,11 +88,11 @@ public class AnalysisFragment extends Fragment {
         data = MainSwipeableActivity.persistenceData;
         for (int i = 0; i < data.size(); i++) {
             AppModel am = data.get(i);
-            Drawable ab = am.getAppIcon();
+            /*Drawable ab = am.getAppIcon();
             Bitmap bitmapDrawable = ((BitmapDrawable) ab).getBitmap();
             Bitmap b = Bitmap.createScaledBitmap(bitmapDrawable, 56, 56, false);
-            ab = new BitmapDrawable(getResources(), b);
-            NoOfApp.add(new BarEntry(i + 1, am.getUsageInPercent(), ab));
+            ab = new BitmapDrawable(getResources(), b);*/
+            NoOfApp.add(new BarEntry(i + 1, am.getUsageInPercent()));
         }
 
         BarDataSet barDataSet = new BarDataSet(NoOfApp, "App Usage");
@@ -103,7 +100,7 @@ public class AnalysisFragment extends Fragment {
         barDataSet.setValueTextSize(16);
         barDataSet.setDrawValues(false);
         barDataSet.setHighlightEnabled(false);
-        barDataSet.setDrawIcons(true);
+        barDataSet.setDrawIcons(false);
 
 
         BarData barData = new BarData(barDataSet);
