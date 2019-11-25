@@ -32,12 +32,12 @@ public class AppLockService extends Service {
     private WindowManager windowManager;
     private WindowManager.LayoutParams params = null;
     private View lock_page_view;
-    // TODO: 03-05-2019 work on fetching restricted app named from mainactivity to service class for static list of restricted apps
+    // TODO: 03-05-2019 work on fetching restricted app named from mainActivity to service class for static list of restricted apps
 //    private String restricted_app_name = "com.google.android.gm";
     public Set<String> restricted_apps;
     private boolean isAppLocked;
     private boolean isRestrictedAppFound;
-    private Preference pref;
+    private Preference preference;
 
 
     public AppLockService() {
@@ -49,8 +49,8 @@ public class AppLockService extends Service {
         isAppLocked = false;
         isRestrictedAppFound = false;
         restricted_apps = new HashSet<>();
-        pref = new Preference(AppLockService.this);
-        restricted_apps.addAll(pref.getLockedApps());
+        preference = new Preference(AppLockService.this);
+        restricted_apps.addAll(preference.getLockedApps());
         if (lock_page_view == null) {
             lock_page_view = LayoutInflater.from(this).inflate(R.layout.lock_view, null);
         }
@@ -96,23 +96,15 @@ public class AppLockService extends Service {
                 return false;
             }
         });
-
-//        restricted_apps.addAll(RestrictedAppsRepo.getRestrictedAppList());
-        /*restricted_apps.add("com.whatsapp");
-        restricted_apps.add("com.facebook.katana");
-        restricted_apps.add("com.instagram.android");
-        restricted_apps.add("com.zhiliaoapp.musically.go");
-        restricted_apps.add("com.google.android.gm");
-*/
         Log.i(TAG, "onCreate: mBackgroundThread Thread Id : - " + mBackgroundThread.getThreadId());
     }
 
     private void goToHome() {
         //intent call to launcher home of the system
-        Intent homeintent = new Intent(Intent.ACTION_MAIN);
-        homeintent.addCategory(Intent.CATEGORY_HOME);
-        homeintent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(homeintent);
+        Intent homeIntent = new Intent(Intent.ACTION_MAIN);
+        homeIntent.addCategory(Intent.CATEGORY_HOME);
+        homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(homeIntent);
     }
 
     @Override

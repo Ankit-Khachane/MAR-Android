@@ -20,12 +20,12 @@ public class AnalysisAdapter extends ArrayAdapter<AppModel> {
     private String listType;
     private ArrayList<AppModel> safeUsage;
     private ArrayList<AppModel> unsafeUsage;
-    private LayoutInflater inflator;
+    private LayoutInflater inflater;
 
     public AnalysisAdapter(Context context, ArrayList<AppModel> list, @NonNull String type) {
         super(context, R.layout.item_analysis_listview, list);
         this.mContext = context;
-        inflator = LayoutInflater.from(mContext);
+        inflater = LayoutInflater.from(mContext);
         if (type.equals(AnalysisListType.SAFE)) {
             this.safeUsage = list;
             listType = AnalysisListType.SAFE;
@@ -42,7 +42,7 @@ public class AnalysisAdapter extends ArrayAdapter<AppModel> {
         AnalysisViewHolder holder;
         final View analysisusageview;
         if (convertView == null) {
-            convertView = inflator.inflate(R.layout.item_analysis_listview, parent, false);
+            convertView = inflater.inflate(R.layout.item_analysis_listview, parent, false);
             holder = new AnalysisViewHolder(convertView);
             convertView.setTag(holder);
         } else {

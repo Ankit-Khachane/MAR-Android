@@ -86,9 +86,12 @@ public class AppMonitorEngine {
     }
 
     private Runnable createRunnable(final Context context) {
-        return () -> {
-            getForegroundAppAndNotify(context);
-            service.schedule(createRunnable(context), timeout, TimeUnit.MILLISECONDS);
+        return new Runnable() {
+            @Override
+            public void run() {
+                AppMonitorEngine.this.getForegroundAppAndNotify(context);
+                service.schedule(AppMonitorEngine.this.createRunnable(context), timeout, TimeUnit.MILLISECONDS);
+            }
         };
     }
 
