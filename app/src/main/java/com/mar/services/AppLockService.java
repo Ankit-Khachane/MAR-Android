@@ -41,6 +41,7 @@ public class AppLockService extends Service {
 
 
     public AppLockService() {
+        super();
     }
 
     @Override
